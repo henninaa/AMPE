@@ -10,12 +10,13 @@ public:
 	~LMMPC();
 	class Waypoint;
 
-	void setup(double horizon = 20, double stepLength = 0.25);
+	void setup(double horizon = 20, double stepLength = 0.25, double initialX = 0, double initialY = 0, double initialZ = 50);
 	void initializeController(ACADO::DVector initialState);
 	void setModel(LMModel * model);
 	void step(ACADO::DVector currentY, double currentTime);
 	void step(ACADO::DVector currentY, ACADO::VariablesGrid referenceTrajectory, double currentTime);
 	void simulate(double duration);
+	void simulate(double duration, ACADO::DVector intitalState);
 
 	void setWaypoints(std::vector<Waypoint> waypoints);
 	void addWaypoint(Waypoint waypoint);

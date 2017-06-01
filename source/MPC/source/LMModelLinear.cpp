@@ -3,6 +3,8 @@
 
 bool LMModelLinear::createModel(){
 
+	setEquilibriumStates();
+
 	setParameter("Rho", 		param("J_x") * param("J_z") - pow(param("J_xz"),2));
 
 	setParameter("Rho_1", 		( ( param("J_xz") * ( param("J_x") - param("J_y") + param("J_z") ) ) / ( param("Rho") ) ) );
@@ -224,6 +226,63 @@ bool LMModelLinear::createModel(){
 	model << dot(delta_e) == delta_eDot;
 	model << dot(delta_t) == delta_tDot;
 
-
+	setConstantsAsParameters();
 	return true;
+}
+
+void LMModelLinear::setEquilibriumStates(){
+
+	uStar = 1.0;
+	vStar = 1.0;
+	wStar = 1.0;
+	thetaStar = 0.0;
+	phiStar = 0.0;
+	psiStar = 0.0;
+	pStar = 0.0;
+	qStar = 0.0;
+	rStar = 0.0;
+	alphaStar = 0.0;
+	betaStar = 0.0;
+	delta_aStar = 0.0;
+	delta_rStar = 0.0;
+	delta_eStar = 0.0;
+	delta_tStar = 0.0;
+	V_aStar = 30.0;
+
+}
+
+void LMModelLinear::setConstantsAsParameters(){
+
+	setParameter("Y_v", Y_v);
+	setParameter("Y_p", Y_p);
+	setParameter("Y_r", Y_r);
+	setParameter("Y_delta_a", Y_delta_a);
+	setParameter("Y_delta_r", Y_delta_r);
+	setParameter("L_v", L_v);
+	setParameter("L_p", L_p);
+	setParameter("L_r", L_r);
+	setParameter("L_delta_a", L_delta_a);
+	setParameter("L_delta_r", L_delta_r);
+	setParameter("N_v", N_v);
+	setParameter("N_p", N_p);
+	setParameter("N_r", N_r);
+	setParameter("N_delta_a", N_delta_a);
+	setParameter("N_delta_r", N_delta_r);
+	setParameter("X_u", X_u);
+	setParameter("X_w", X_w);
+	setParameter("X_q", X_q);
+	setParameter("X_delta_e", X_delta_e);
+	setParameter("X_delta_t", X_delta_t);
+	setParameter("Z_u", Z_u);
+	setParameter("Z_w", Z_w);
+	setParameter("Z_q", Z_q);
+	setParameter("Z_delta_e", Z_delta_e);
+	setParameter("Z_delta_t", Z_delta_t);
+	setParameter("M_u", M_u);
+	setParameter("M_w", M_w);
+	setParameter("M_q", M_q);
+	setParameter("M_delta_e", M_delta_e);
+	setParameter("M_delta_t", M_delta_t);
+
+
 }

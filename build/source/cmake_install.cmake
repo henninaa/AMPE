@@ -1,4 +1,4 @@
-# Install script for directory: /home/henning/Documents/Masters_Thesis/AIME/source
+# Install script for directory: /home/henning/Documents/Masters_Thesis/AMPE/source
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,7 +34,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/henning/Documents/Masters_Thesis/AIME/build/source/MPC/cmake_install.cmake")
+  include("/home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC/cmake_install.cmake")
 
 endif()
 

@@ -6,5 +6,5 @@ CXX_FLAGS =   -std=c++11
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/henning/Documents/Masters_Thesis/AIME/source/MPC/. -I/home/henning/Documents/prosjektet/source_acado/ACADOtoolkit -I/home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado -I/home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/external_packages -I/home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/external_packages/qpOASES-3.2.0/include -I/home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/build 
+CXX_INCLUDES = -I/home/henning/Documents/Masters_Thesis/AMPE/source/MPC/. -I/home/henning/Documents/prosjektet/source_acado/ACADOtoolkit -I/home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado -I/home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/external_packages -I/home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/external_packages/qpOASES-3.2.0/include -I/home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/build 
 

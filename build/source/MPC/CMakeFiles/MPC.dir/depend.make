@@ -1388,6 +1388,7 @@ source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: ../source/MPC/source/ALMPC.h
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: ../source/MPC/source/LMModel.h
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: ../source/MPC/source/LMModelLinear.h
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: ../source/MPC/source/main.cpp
+source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: ../source/MPC/source/testFunctions.h
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/acado_integrators.hpp
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/acado_optimal_control.hpp
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/acado_toolkit.hpp

@@ -5,7 +5,7 @@ LMModel::LMModel(int parameterSet){
 	std::string baseLoc = PARAMLOCATION;
 	switch (parameterSet){
 		case X8PARAMETERS:
-			loadParameters("/home/henning/Documents/Masters_Thesis/AIME/source/MPC/source/params_Zagi.txt");
+			loadParameters(baseLoc + "params_X8.txt");
 		break;
 		case ZAGIPARAMETERS:
 			loadParameters(baseLoc + "params_Zagi.txt");

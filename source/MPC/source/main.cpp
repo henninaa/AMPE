@@ -1,15 +1,13 @@
 #include "ALMPC.h"
 #include "LMModelLinear.h"
+#include "testFunctions.h"
 
 
 int main(int argc, char const *argv[])
 {
 	/* code */
 
-	LMModelLinear * test;
-	test = new LMModelLinear();
-	test->createModel();
-	test->printAllParameters();
+	testSimulate();
 
 	return 0;
 }

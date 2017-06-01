@@ -1,4 +1,4 @@
-# Install script for directory: /home/henning/Documents/Masters_Thesis/AIME/source/MPC
+# Install script for directory: /home/henning/Documents/Masters_Thesis/AMPE/source/MPC
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

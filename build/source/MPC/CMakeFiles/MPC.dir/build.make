@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/henning/Documents/Masters_Thesis/AIME
+CMAKE_SOURCE_DIR = /home/henning/Documents/Masters_Thesis/AMPE
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/henning/Documents/Masters_Thesis/AIME/build
+CMAKE_BINARY_DIR = /home/henning/Documents/Masters_Thesis/AMPE/build
 
 # Include any dependencies generated for this target.
 include source/MPC/CMakeFiles/MPC.dir/depend.make
@@ -59,16 +59,16 @@ include source/MPC/CMakeFiles/MPC.dir/flags.make
 
 source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o: source/MPC/CMakeFiles/MPC.dir/flags.make
 source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o: ../source/MPC/source/ALMPC.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/henning/Documents/Masters_Thesis/AIME/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o"
-	cd /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC && /usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MPC.dir/source/ALMPC.cpp.o -c /home/henning/Documents/Masters_Thesis/AIME/source/MPC/source/ALMPC.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/henning/Documents/Masters_Thesis/AMPE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o"
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC && /usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MPC.dir/source/ALMPC.cpp.o -c /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/ALMPC.cpp
 
 source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/MPC.dir/source/ALMPC.cpp.i"
-	cd /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/henning/Documents/Masters_Thesis/AIME/source/MPC/source/ALMPC.cpp > CMakeFiles/MPC.dir/source/ALMPC.cpp.i
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/ALMPC.cpp > CMakeFiles/MPC.dir/source/ALMPC.cpp.i
 
 source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/MPC.dir/source/ALMPC.cpp.s"
-	cd /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/henning/Documents/Masters_Thesis/AIME/source/MPC/source/ALMPC.cpp -o CMakeFiles/MPC.dir/source/ALMPC.cpp.s
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/ALMPC.cpp -o CMakeFiles/MPC.dir/source/ALMPC.cpp.s
 
 source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o.requires:
 
@@ -83,16 +83,16 @@ source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o.provides.build: source/MPC/CMak
 
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: source/MPC/CMakeFiles/MPC.dir/flags.make
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: ../source/MPC/source/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/henning/Documents/Masters_Thesis/AIME/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o"
-	cd /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC && /usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MPC.dir/source/main.cpp.o -c /home/henning/Documents/Masters_Thesis/AIME/source/MPC/source/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/henning/Documents/Masters_Thesis/AMPE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o"
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC && /usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MPC.dir/source/main.cpp.o -c /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/main.cpp
 
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/MPC.dir/source/main.cpp.i"
-	cd /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/henning/Documents/Masters_Thesis/AIME/source/MPC/source/main.cpp > CMakeFiles/MPC.dir/source/main.cpp.i
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/main.cpp > CMakeFiles/MPC.dir/source/main.cpp.i
 
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/MPC.dir/source/main.cpp.s"
-	cd /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/henning/Documents/Masters_Thesis/AIME/source/MPC/source/main.cpp -o CMakeFiles/MPC.dir/source/main.cpp.s
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/main.cpp -o CMakeFiles/MPC.dir/source/main.cpp.s
 
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o.requires:
 
@@ -107,16 +107,16 @@ source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o.provides.build: source/MPC/CMake
 
 source/MPC/CMakeFiles/MPC.dir/source/LMModel.cpp.o: source/MPC/CMakeFiles/MPC.dir/flags.make
 source/MPC/CMakeFiles/MPC.dir/source/LMModel.cpp.o: ../source/MPC/source/LMModel.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/henning/Documents/Masters_Thesis/AIME/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object source/MPC/CMakeFiles/MPC.dir/source/LMModel.cpp.o"
-	cd /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC && /usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MPC.dir/source/LMModel.cpp.o -c /home/henning/Documents/Masters_Thesis/AIME/source/MPC/source/LMModel.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/henning/Documents/Masters_Thesis/AMPE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object source/MPC/CMakeFiles/MPC.dir/source/LMModel.cpp.o"
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC && /usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MPC.dir/source/LMModel.cpp.o -c /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/LMModel.cpp
 
 source/MPC/CMakeFiles/MPC.dir/source/LMModel.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/MPC.dir/source/LMModel.cpp.i"
-	cd /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/henning/Documents/Masters_Thesis/AIME/source/MPC/source/LMModel.cpp > CMakeFiles/MPC.dir/source/LMModel.cpp.i
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/LMModel.cpp > CMakeFiles/MPC.dir/source/LMModel.cpp.i
 
 source/MPC/CMakeFiles/MPC.dir/source/LMModel.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/MPC.dir/source/LMModel.cpp.s"
-	cd /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/henning/Documents/Masters_Thesis/AIME/source/MPC/source/LMModel.cpp -o CMakeFiles/MPC.dir/source/LMModel.cpp.s
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/LMModel.cpp -o CMakeFiles/MPC.dir/source/LMModel.cpp.s
 
 source/MPC/CMakeFiles/MPC.dir/source/LMModel.cpp.o.requires:
 
@@ -131,16 +131,16 @@ source/MPC/CMakeFiles/MPC.dir/source/LMModel.cpp.o.provides.build: source/MPC/CM
 
 source/MPC/CMakeFiles/MPC.dir/source/LMModelLinear.cpp.o: source/MPC/CMakeFiles/MPC.dir/flags.make
 source/MPC/CMakeFiles/MPC.dir/source/LMModelLinear.cpp.o: ../source/MPC/source/LMModelLinear.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/henning/Documents/Masters_Thesis/AIME/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object source/MPC/CMakeFiles/MPC.dir/source/LMModelLinear.cpp.o"
-	cd /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC && /usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MPC.dir/source/LMModelLinear.cpp.o -c /home/henning/Documents/Masters_Thesis/AIME/source/MPC/source/LMModelLinear.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/henning/Documents/Masters_Thesis/AMPE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object source/MPC/CMakeFiles/MPC.dir/source/LMModelLinear.cpp.o"
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC && /usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MPC.dir/source/LMModelLinear.cpp.o -c /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/LMModelLinear.cpp
 
 source/MPC/CMakeFiles/MPC.dir/source/LMModelLinear.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/MPC.dir/source/LMModelLinear.cpp.i"
-	cd /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/henning/Documents/Masters_Thesis/AIME/source/MPC/source/LMModelLinear.cpp > CMakeFiles/MPC.dir/source/LMModelLinear.cpp.i
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/LMModelLinear.cpp > CMakeFiles/MPC.dir/source/LMModelLinear.cpp.i
 
 source/MPC/CMakeFiles/MPC.dir/source/LMModelLinear.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/MPC.dir/source/LMModelLinear.cpp.s"
-	cd /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/henning/Documents/Masters_Thesis/AIME/source/MPC/source/LMModelLinear.cpp -o CMakeFiles/MPC.dir/source/LMModelLinear.cpp.s
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/LMModelLinear.cpp -o CMakeFiles/MPC.dir/source/LMModelLinear.cpp.s
 
 source/MPC/CMakeFiles/MPC.dir/source/LMModelLinear.cpp.o.requires:
 
@@ -170,8 +170,8 @@ MPC_EXTERNAL_OBJECTS =
 ../source/MPC/build/MPC: source/MPC/CMakeFiles/MPC.dir/build.make
 ../source/MPC/build/MPC: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/build/lib/libacado_toolkit_s.so
 ../source/MPC/build/MPC: source/MPC/CMakeFiles/MPC.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/henning/Documents/Masters_Thesis/AIME/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable ../../../source/MPC/build/MPC"
-	cd /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/MPC.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/henning/Documents/Masters_Thesis/AMPE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable ../../../source/MPC/build/MPC"
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/MPC.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 source/MPC/CMakeFiles/MPC.dir/build: ../source/MPC/build/MPC
@@ -186,10 +186,10 @@ source/MPC/CMakeFiles/MPC.dir/requires: source/MPC/CMakeFiles/MPC.dir/source/LMM
 .PHONY : source/MPC/CMakeFiles/MPC.dir/requires
 
 source/MPC/CMakeFiles/MPC.dir/clean:
-	cd /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC && $(CMAKE_COMMAND) -P CMakeFiles/MPC.dir/cmake_clean.cmake
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC && $(CMAKE_COMMAND) -P CMakeFiles/MPC.dir/cmake_clean.cmake
 .PHONY : source/MPC/CMakeFiles/MPC.dir/clean
 
 source/MPC/CMakeFiles/MPC.dir/depend:
-	cd /home/henning/Documents/Masters_Thesis/AIME/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/henning/Documents/Masters_Thesis/AIME /home/henning/Documents/Masters_Thesis/AIME/source/MPC /home/henning/Documents/Masters_Thesis/AIME/build /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC /home/henning/Documents/Masters_Thesis/AIME/build/source/MPC/CMakeFiles/MPC.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/henning/Documents/Masters_Thesis/AMPE /home/henning/Documents/Masters_Thesis/AMPE/source/MPC /home/henning/Documents/Masters_Thesis/AMPE/build /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC /home/henning/Documents/Masters_Thesis/AMPE/build/source/MPC/CMakeFiles/MPC.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : source/MPC/CMakeFiles/MPC.dir/depend
 

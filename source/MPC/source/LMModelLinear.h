@@ -11,7 +11,7 @@ class LMModelLinear :
 	public LMModel
 {
 public:
-	LMModelLinear() : LMModel(X8PARAMETERS) {}
+	LMModelLinear() : LMModel(ZAGIPARAMETERS) {}
 	~LMModelLinear() {}
 
 	bool createModel();
@@ -27,4 +27,8 @@ private:
 	double uStar, vStar, wStar, thetaStar, phiStar, psiStar, pStar, qStar, rStar, alphaStar, betaStar, delta_aStar, delta_rStar, delta_eStar, delta_tStar; //Trim
 	double V_aStar;
 	//other parameters can be found in LMModel.h
+
+	void setEquilibriumStates();
+
+	void setConstantsAsParameters();
 };
