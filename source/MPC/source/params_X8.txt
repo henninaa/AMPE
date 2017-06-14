@@ -8,7 +8,7 @@ b 2.1
 c 0.357142858
 S_prop 0.3556
 rho 1.2682
-k_motor 
+k_motor 80
 k_T_p 0
 k_Omega 0
 e 0.993384556116078
@@ -28,7 +28,7 @@ C_m_delta_e -0.485680915663958
 C_prop 1.11
 M 50
 alpha_0
-epsilon
+epsilon 0.1592
 C_D_p 0.010182
 C_n_delta_r 0
 
@@ -49,3 +49,6 @@ C_l_delta_a 0.298694319687316
 C_n_delta_a 0.007569499616129
 C_Y_delta_r 0
 C_l_delta_r 0
+
+sjekk epsilon
+sjekk K_motor

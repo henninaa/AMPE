@@ -5,9 +5,11 @@ source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o: ../source/MPC/source/ALMPC.cpp
 source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o: ../source/MPC/source/ALMPC.h
 source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o: ../source/MPC/source/LMModel.h
 source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o: ../source/MPC/source/LMModelLinear.h
+source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/acado_gnuplot.hpp
 source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/acado_integrators.hpp
 source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/acado_optimal_control.hpp
 source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/acado_toolkit.hpp
+source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/bindings/acado_gnuplot/gnuplot_window.hpp
 source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/clock/clock.hpp
 source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/clock/clock.ipp
 source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/clock/real_clock.hpp
@@ -1389,9 +1391,11 @@ source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: ../source/MPC/source/LMModel.h
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: ../source/MPC/source/LMModelLinear.h
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: ../source/MPC/source/main.cpp
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: ../source/MPC/source/testFunctions.h
+source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/acado_gnuplot.hpp
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/acado_integrators.hpp
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/acado_optimal_control.hpp
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/acado_toolkit.hpp
+source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/bindings/acado_gnuplot/gnuplot_window.hpp
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/clock/clock.hpp
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/clock/clock.ipp
 source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o: /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/clock/real_clock.hpp

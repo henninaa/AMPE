@@ -11,11 +11,19 @@ ALMPC.h
 /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/ALMPC.h
 
 /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/ALMPC.h
+string
+-
+vector
+-
+iostream
+-
 LMModelLinear.h
 /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/LMModelLinear.h
 acado_toolkit.hpp
 -
 acado_optimal_control.hpp
+-
+acado_gnuplot.hpp
 -
 
 /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/LMModel.cpp
@@ -63,6 +71,12 @@ testFunctions.h
 /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/testFunctions.h
 ALMPC.h
 /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/ALMPC.h
+LMModelLinear.h
+/home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/LMModelLinear.h
+
+/home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/acado_gnuplot.hpp
+acado/bindings/acado_gnuplot/gnuplot_window.hpp
+-
 
 /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/acado_integrators.hpp
 acado/utils/acado_utils.hpp
@@ -142,6 +156,10 @@ acado/transfer_device/actuator.hpp
 acado/transfer_device/sensor.hpp
 -
 acado/code_generation/code_generation.hpp
+-
+
+/home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/bindings/acado_gnuplot/gnuplot_window.hpp
+acado/user_interaction/plot_window.hpp
 -
 
 /home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/acado/clock/clock.hpp

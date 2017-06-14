@@ -1,7 +1,13 @@
 #pragma once
+#include <string>
+#include <vector>
+#include <iostream>
+
 #include "LMModelLinear.h"
 #include <acado_toolkit.hpp>
 #include <acado_optimal_control.hpp>
+#include <acado_gnuplot.hpp>
+
 
 class LMMPC
 {
@@ -29,10 +35,11 @@ private:
 	double horizon;
 	double stepLength;
 	double currentTime;
+	ACADO::DVector u; 
 
 	LMModel * model;
 	ACADO::DMatrix * coefficientMatrix;
-	ACADO::DifferentialState X;
+	
 	ACADO::Function * referenceFunction;
 	ACADO::OCP * ocp;
 	ACADO::RealTimeAlgorithm * alg;
@@ -40,17 +47,21 @@ private:
 	int referenceFunctionDimention;
 	ACADO::Controller * controller;
 
-	ACADO::VariablesGrid waypoints;
+	std::vector<Waypoint> waypoints;
+	ACADO::VariablesGrid referencePath;
 
 	ACADO::SimulationEnvironment * simulator;
-	ACADO::OutputFcn simulatorOutput;
+	ACADO::OutputFcn * simulatorOutput;
 
 	void setupReferenceFunction();
-	void setupOCP();
+	void setupOCP(double horizon, double sttepLenght);
+	void createReferenceTrajectory();
 	void getDubinsPath(std::vector<ACADO::DVector> wps);
 	void completeStep();
 
 	//const double maxWaypoints = 20;
+
+
 };
 
 class LMMPC::Waypoint
@@ -63,3 +74,10 @@ public:
 	double x, y, z, time;
 
 };
+
+/*
+ostream & operator <<(std::vector<Waypoints> &rhs){
+	ostream result;
+	return result;
+}
+*/

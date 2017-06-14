@@ -123,6 +123,19 @@ MPC/fast:
 	$(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/build
 .PHONY : MPC/fast
 
+#=============================================================================
+# Target rules for targets named pathPlanner
+
+# Build rule for target.
+pathPlanner: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 pathPlanner
+.PHONY : pathPlanner
+
+# fast build rule for target.
+pathPlanner/fast:
+	$(MAKE) -f source/MILP_Planner/CMakeFiles/pathPlanner.dir/build.make source/MILP_Planner/CMakeFiles/pathPlanner.dir/build
+.PHONY : pathPlanner/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -132,6 +145,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... MPC"
+	@echo "... pathPlanner"
 .PHONY : help
 
 

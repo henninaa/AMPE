@@ -8,6 +8,7 @@ int main(int argc, char const *argv[])
 	/* code */
 
 	testSimulate();
+	//testFlat();
 
 	return 0;
 }
