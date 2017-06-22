@@ -1,0 +1,244 @@
+//#include "Plasma.nddl"
+
+class UAV;
+class Navigator;
+class Node;
+class Data;
+class DataContainerState;
+class DataContainer;
+class Location;
+class BaseStation;
+
+class Location 
+{
+	float n;
+	float e;
+	float d;
+	Location(float _n, float _e, float _d)
+	{
+		n = _n;
+		e = _e;
+		d = _d;
+	}
+}
+
+
+class Data
+{
+	string name;
+	//int size;
+
+	Data(string _name)
+	{
+		name = _name;
+	}
+	Data()
+	{
+		name = "unspecified";
+	}
+}
+
+class DataContainerState
+	extends Timeline
+{
+	predicate HasData {}
+	predicate IsTransmitting {}
+	predicate IsEmpty {}
+}
+
+class TranscieverState{
+	
+	predicate FreePred {}
+	predicate TransmittingPred {}
+}
+
+class DataContainer
+{
+	Data data;
+
+	DataContainerState state;
+
+	DataContainer(string dataName)
+	{
+		data = new Data(dataName);
+		state = new DataContainerState();
+	}
+	DataContainer()
+	{
+		data = new Data();
+		state = new DataContainerState();
+	}
+	DataContainer(Data _data)
+	{
+		data = _data;
+		state = new DataContainerState();
+	}
+}
+
+
+class BaseStation
+{
+	Location location;
+
+	TranscieverState state;
+
+	BaseStation(float n, float e, float d)
+	{
+		location = new Location(n,e,d);
+		state = new TranscieverState();
+	}
+
+	predicate RecievedDataPred
+	{
+		Data data;
+	}
+}
+
+class Navigator
+	extends Timeline
+{
+
+
+
+	predicate Going
+	{
+		Location from;
+		Location to;
+	}
+
+	predicate At
+	{
+		Location at;
+	}
+}
+
+class Node
+{
+
+	string dataName;
+	Location location;
+
+	DataContainer dataContainer;
+
+	Node(string _dataName, float n, float e, float d)
+	{
+		dataName = _dataName;
+		dataContainer = new DataContainer(_dataName);
+		location = new Location(n, e, d);
+	}
+	Node(float n, float e, float d)
+	{
+		dataName = "unspecified";
+		dataContainer = new DataContainer();
+		location = new Location(n, e, d);
+	}
+	
+	Node(Location _location, DataContainer _dataContainer)
+	{
+		dataName = "unspecified";
+
+		dataContainer = _dataContainer;
+		location = _location;
+	}
+
+}
+
+
+class UAV
+{
+	
+	Navigator navigator;
+
+	UAV()
+	{
+		navigator = new Navigator();
+	}
+
+	predicate HasData
+	{
+		Data data;
+	}
+	
+	action GO
+	{
+		Location to;
+	}
+
+	action CollectData
+	{
+		Data data;
+		Node possibleNodes;
+	}
+
+	action SendDataToBaseAct
+	{
+		Data data;
+		BaseStation base;
+	}
+
+
+}
+
+UAV::GO
+{
+	this.start >= 0;
+	
+	met_by(condition object.navigator.At _from);
+	meets(effect object.navigator.At destination);
+	eq(to, destination.at);
+
+	equals(effect object.navigator.Going going);
+	eq(going.from, _from.at);
+	eq(going.to, destination.at);
+	
+	float dist;
+	calcDistance(dist, _from.at.n, _from.at.e, destination.at.n, destination.at.e);
+	duration <= dist;
+	duration >= dist - 0.9999;
+}
+
+
+UAV::CollectData
+{
+	eq(duration, 2);
+
+	this.start >= 0;
+
+	possibleNodes.dataContainer.data == this.data;
+
+	contained_by(condition object.navigator.At currentLocation);
+	eq(currentLocation.at, possibleNodes.location);
+
+	met_by(condition possibleNodes.dataContainer.state.HasData);
+
+	starts(effect HasData inputData);
+	eq(inputData.data, data);
+
+	equals(effect possibleNodes.dataContainer.state.IsTransmitting);
+	meets(effect possibleNodes.dataContainer.state.IsEmpty);
+
+}
+
+UAV::SendDataToBaseAct
+{
+	duration == 2;
+
+	met_by(condition HasData hasData);
+	hasData.data == this.data;
+
+	contained_by(condition object.navigator.At currentLocation);
+	currentLocation.at == base.location;
+
+/*
+	after(condition CollectData isCollected);
+	isCollected.data == this.data;
+	isCollected.possibleNodes.dataContainer.data == data;
+*/
+
+	equals(effect base.state.TransmittingPred);
+	meets(effect base.state.FreePred);
+
+	starts(effect base.RecievedDataPred recieved);
+	recieved.data == data;
+
+}

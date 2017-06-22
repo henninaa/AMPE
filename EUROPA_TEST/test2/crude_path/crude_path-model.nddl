@@ -1,0 +1,201 @@
+//#include "Plasma.nddl"
+
+class UAV;
+class Navigator;
+class Node;
+class Data;
+class DataContainerState;
+class DataContainer;
+class Location;
+class BaseStation;
+
+class Location 
+{
+	float n;
+	float e;
+	float d;
+	Location(float _n, float _e, float _d)
+	{
+		n = _n;
+		e = _e;
+		d = _d;
+	}
+}
+
+
+class Data
+{
+	string name;
+
+	Data(string _name)
+	{
+		name = _name;
+	}
+	Data()
+	{
+		name = "unspecified";
+	}
+}
+
+
+class DataContainer
+{
+	Data data;
+
+	DataContainer(string dataName)
+	{
+		data = new Data(dataName);
+	}
+	DataContainer()
+	{
+		data = new Data();
+	}
+	DataContainer(Data _data)
+	{
+		data = _data;
+	}
+}
+
+
+class BaseStation
+{
+	Location location;
+
+	BaseStation(float n, float e, float d)
+	{
+		location = new Location(n,e,d);
+	}
+
+	predicate RecievedDataPred
+	{
+		Data data;
+	}
+}
+
+class Navigator
+	extends Timeline
+{
+
+
+
+	predicate Going
+	{
+		Location from;
+		Location to;
+	}
+
+	predicate At
+	{
+		Location at;
+	}
+}
+
+class Node
+{
+
+	Location location;
+
+	DataContainer dataContainer;
+
+	Node(string _dataName, float n, float e, float d)
+	{
+		dataContainer = new DataContainer(_dataName);
+		location = new Location(n, e, d);
+	}
+	Node(float n, float e, float d)
+	{
+		dataContainer = new DataContainer();
+		location = new Location(n, e, d);
+	}
+	
+	Node(Location _location, DataContainer _dataContainer)
+	{
+		dataContainer = _dataContainer;
+		location = _location;
+	}
+
+}
+
+
+class UAV
+{
+	
+	Navigator navigator;
+
+	UAV()
+	{
+		navigator = new Navigator();
+	}
+
+	predicate HasData
+	{
+		Data data;
+	}
+	
+	action GO
+	{
+		Location to;
+	}
+
+	action CollectData
+	{
+		Data data;
+	}
+
+	action SendDataToBaseAct
+	{
+		Data data;
+		BaseStation base;
+	}
+
+
+}
+
+UAV::GO
+{
+
+	met_by(condition object.navigator.At _from);
+	meets(effect object.navigator.At destination);
+	eq(to, destination.at);
+
+	equals(effect object.navigator.Going going);
+	eq(going.from, _from.at);
+	eq(going.to, destination.at);
+	
+	float dist;
+	calcDistance(dist, _from.at.n, _from.at.e, destination.at.n, destination.at.e);
+	//duration <= dist;
+	//duration >= dist - 0.9999;
+}
+
+
+UAV::CollectData
+{
+	eq(duration, 2);
+
+	Node possibleNodes;
+
+	possibleNodes.dataContainer.data == data;
+
+	contained_by(condition object.navigator.At currentLocation);
+	eq(currentLocation.at, possibleNodes.location);
+
+	starts(effect HasData collectedData);
+	collectedData.data == data;
+
+}
+
+UAV::SendDataToBaseAct
+{
+	duration == 2;
+
+	met_by(condition HasData hasData);
+	hasData.data == data;
+
+	contained_by(condition object.navigator.At currentLocation);
+	currentLocation.at == base.location;
+
+	starts(effect base.RecievedDataPred recieved);
+	recieved.data == data;
+
+}

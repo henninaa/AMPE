@@ -1,0 +1,31 @@
+#include "Test-model.nddl"
+
+// Problem instance : turning the light off
+LightBulb bulb1 = new LightBulb();
+LightSwitch switch1 = new LightSwitch(bulb1);
+
+Location ship1 = new Location("1");
+Location ship2 = new Location("2");
+Location ship3 = new Location("3");
+
+UAV uav = new UAV();
+
+close();
+
+
+fact(uav.navigator.At pos0);
+eq(pos0.start, 0);
+eq(pos0.location, ship1);
+
+goal(uav.navigator.At gl);
+gl.start.specify(50);
+gl.location.specify(ship3);
+
+// At time 0, the bulb is on
+fact(bulb1.On initialCondition);
+eq(initialCondition.start,0);
+
+// We want the bulb to be off by time 10
+goal(bulb1.Off goal1);
+lt(0,goal1.start);
+lt(goal1.start,10);cd

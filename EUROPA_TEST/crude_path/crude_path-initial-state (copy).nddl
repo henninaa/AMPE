@@ -1,0 +1,73 @@
+#include "crude_path-model.nddl"
+
+
+/*
+Node ship = new Node("ship", 8, 0, 0);
+Node sensor = new Node("sensor", 5, 0, 0);
+
+UAV uav = new UAV();
+
+BaseStation base = new BaseStation(0,0,0);
+
+close();
+
+
+
+fact(uav.navigator.At startsAtBase);
+startsAtBase.at.specify(base.location);
+
+goal(base.RecievedDataPred retrievedShip);
+retrievedShip.data.specify(ship.dataContainer.data);
+
+goal(base.RecievedDataPred retrievedSensor);
+retrievedSensor.data.specify(sensor.dataContainer.data);
+
+goal(uav.navigator.At endsAtBase);
+endsAtBase.at.specify(ship.location);
+
+retrievedShip after startsAtBase;
+retrievedShip ends_before endsAtBase;
+
+retrievedSensor after startsAtBase;
+retrievedSensor ends_before endsAtBase;
+
+startsAtBase before endsAtBase;
+
+leq(0, startsAtBase.start);
+leq(endsAtBase.end, 99);
+
+
+*/
+
+
+
+
+
+
+Node ship = new Node("data1", 10, 0, 0);
+Node sensor = new Node("data2", 2, 0, 0);
+
+UAV uav = new UAV();
+BaseStation base = new BaseStation(0,0,0);
+
+close();
+
+fact(ship.dataContainer.state.HasData n1);
+n1.start.specify(0);
+fact(sensor.dataContainer.state.HasData n2);
+eq(n2.start, 0);
+
+fact(uav.navigator.At firstPosition);
+firstPosition.at.specify(base.location);
+
+goal(uav.navigator.At endPosition);
+endPosition.at.specify(base.location);
+
+goal(base.RecievedDataPred transportedData2);
+transportedData2.data.specify(sensor.dataContainer.data);
+
+transportedData2 after firstPosition;
+transportedData2 ends_before endPosition;
+
+leq(0, firstPosition.start);
+leq(endPosition.end, 100);

@@ -1,0 +1,21 @@
+#include "crude_path-model.nddl"
+
+
+UAV uav = new UAV();
+
+
+
+// Close the the PLASMA Database - no more objects can be created.
+close();
+
+
+
+
+
+
+
+// place your goals here.
+goal(YourObject.helloWorld initialToken);
+initialToken.start.specify(0); // Starts at beginning of the horizon
+
+// The planner should take it form here!

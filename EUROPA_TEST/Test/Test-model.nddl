@@ -1,0 +1,87 @@
+
+class LightBulb extends Timeline
+{
+    predicate On  {}
+    predicate Off {}
+}
+
+class LightSwitch extends Timeline
+{
+    LightBulb myBulb_;
+
+    LightSwitch(LightBulb b)
+    {
+        myBulb_ = b;
+    }
+
+    action turnOn  { duration=1; }
+    action turnOff { duration=1; }
+}
+
+LightSwitch::turnOn
+{
+    met_by(condition object.myBulb_.Off);  // Bulb must be Off to be turned On
+    meets(effect object.myBulb_.On);   // Must be turned on through the switch
+}
+
+LightSwitch::turnOff
+{
+    met_by(condition object.myBulb_.On);   // Bulb must be On to be turned Off
+    meets(effect object.myBulb_.Off);      // Must be turned off through the switch
+}
+
+class Location
+{
+    
+    string name;
+
+    Location(string _name)
+    {
+        name = _name;
+    }
+
+}
+
+
+class Navigator extends Timeline
+{
+
+    predicate At
+    {
+        Location location;
+    }
+
+    predicate Going
+    {
+        Location from;
+        Location to;
+        neq(from, to);
+    }
+}
+
+class UAV
+{
+    Navigator navigator;
+
+    UAV()
+    {
+        navigator = new Navigator();
+    }
+
+    action GO
+    {
+        Location dest;
+    }
+}
+
+UAV::GO
+{
+    met_by(condition object.navigator.At _from);
+    meets(effect object.navigator.At _to);
+    eq(_to.location, dest);
+
+    equals(effect object.navigator.Going going);
+    eq(going.from, _from.location);
+    eq(going.to, _to.location);
+
+}

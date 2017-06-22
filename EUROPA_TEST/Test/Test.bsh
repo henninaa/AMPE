@@ -1,0 +1,29 @@
+import psengine.*;
+import Test.*;
+
+try {
+	errors = psengine.executeScript("nddl",bsh.cwd+"/Test-initial-state.nddl",true/*isFile*/);
+    if (!errors.equals(""))
+        throw new RuntimeException("Failed loading model:"+errors);
+    
+	//desktop.makeNddlConsole();
+	solver = desktop.makeSolver(
+		"PlannerConfig.xml", // config
+		0,   // startHorizon
+        100  // endHorizon
+    );
+
+	desktop.makeSolverDialog(solver);
+}
+catch (Exception e) {
+    e.printStackTrace();
+}
+void showPlan()
+{
+	PSObjectList l = psengine.getObjectsByType("Object");
+	for (int i=0;i<l.size();i++) {
+		PSObject o = l.get(i);
+		if(o.toLongString().startsWith("Light"))  // ie LightBulb or LightSwitch
+			desktop.showTokens(l.get(i));
+    }
+}

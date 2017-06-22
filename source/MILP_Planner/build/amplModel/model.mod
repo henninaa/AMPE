@@ -44,6 +44,8 @@ param waypoints{w in 1..W, j in Dim};  #--- actual waypoints.
 param M_finnish;
 param gamma_finnish;  		# positive weight for J_finnish
 
+param M_con;
+
 #-------- Vars
 
 var v {p in 1..np, i in 0..N, row in Dim};		#velocity in vehicle, time, row
@@ -65,6 +67,8 @@ var z{p in 1..np, i in 0..N};		#
 
 var lambda_sensor{p in 1..np, i in 0..N, t in 1..W};
 
+var UAV_distances{p in 1..np, q in 1..np, i in 0..N};
+
  
 #--- binary vars
 
@@ -73,6 +77,8 @@ var bvel{p in 1..np, i in 0..N, k in 1..Dvel, l in 1..Dvel/2} binary;
 var bwp{p in 1..np, i in 0..N, w in 1..W} binary;
 
 var bsensor{p in 1..np, i in 0..N} binary;
+
+var bconnectivity{p in 1..np, q in 1..np, i in 0..N} binary;
 
 #-------- model
 
@@ -200,17 +206,16 @@ subject to waypointHitN{p in  1..np, i in 1..N, w in 1..W, j in Dim}:
  #Data gathering constraints
 
 subject to gather1{p in 1..np, i in 1..N, t in 1..W-1}:
-lambda_sensor[p,i,t] <= sum{k in 1..i, w in t..t}(bwp{p,k,w});
+lambda_sensor[p,i,t] <= sum{k in 1..i}(bwp[p,k,t]);
 
 subject to gather2{p in 1..np, i in 1..N, t in 1..W-1}:
-lambda_sensor[p,i,t] <= sum{k in i..N, w in t..t}(bwp{p,k,w});
+lambda_sensor[p,i,t] <= sum{k in i..N}(bwp[p,k,t]);
 
-subject to gather3{p in 1..np, i in 1..N, t in 1..W-1}:
-sum{i in 1..N}(lambda_sensor[p,i,t}) = sum{i in 1..N}(i * bwp{p,i,1}) - sum{i in 1..N}((i + 1) * bwp{p,i,W});
+subject to gather3{p in 1..np, t in 1..W-1}:
+sum{i in 1..N}(lambda_sensor[p,i,t]) = sum{i in 1..N}(i * bwp[p,i,1]) - sum{i in 1..N}((i + 1) * bwp[p,i,W]);
 
-subject to sensorActive{p in 1..np, i in 1..N, t in 1..W-1}:
-sum{t in 1..W}(lambda{p,i,t) = bsensor{p,i};
-
+subject to sensorActive{p in 1..np, i in 1..N}:
+sum{t in 1..W}(lambda_sensor[p,i,t]) = bsensor[p,i];
 
 #Dataflow constraints
 
@@ -219,3 +224,5 @@ sum{t in 1..W}(lambda{p,i,t) = bsensor{p,i};
 
 #connectivity constraints
 
+subject to connectivityDistance{p in 1..np, q in 1..np, i in 0..N}:
+UAV_distance[p,q,i] = 

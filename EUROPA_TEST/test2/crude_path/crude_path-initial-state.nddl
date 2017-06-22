@@ -1,0 +1,81 @@
+#include "crude_path-model.nddl"
+
+Node ship = new Node("ship", 2, 0, 0);
+Node sensor = new Node("sensor", 3, 0, 0);
+
+UAV uav = new UAV();
+
+BaseStation base = new BaseStation(0,0,0);
+
+close();
+
+
+
+fact(uav.navigator.At startsAtBase);
+startsAtBase.at.specify(base.location);
+
+goal(base.RecievedDataPred retrievedShip);
+retrievedShip.data.specify(ship.dataContainer.data);
+
+goal(base.RecievedDataPred retrievedSensor);
+retrievedSensor.data.specify(sensor.dataContainer.data);
+
+goal(uav.navigator.At endsAtBase);
+endsAtBase.at.specify(base.location);
+
+retrievedShip after startsAtBase;
+retrievedShip ends_before endsAtBase;
+
+retrievedSensor after startsAtBase;
+retrievedSensor ends_before endsAtBase;
+
+leq(0, startsAtBase.start);
+leq(endsAtBase.end, 99);
+
+
+
+
+
+
+/*
+Node node1 = new Node("data1", 10, 0, 0);
+Node node2 = new Node("data2", 2, 0, 0);
+Node node3 = new Node("3", 3, 0, 0);
+Node node4 = new Node("5", 4, 0, 0);
+
+Data data5 = new Data();
+Location location5 = new Location(0,0,0);
+DataContainer dc5 = new DataContainer(data5);
+Node node5 = new Node(location5, dc5);
+
+UAV uav = new UAV();
+BaseStation base = new BaseStation(0,0,0);
+
+close();
+
+fact(node1.dataContainer.state.HasData n1);
+n1.start.specify(0);
+fact(node2.dataContainer.state.HasData n2);
+eq(n2.start, 0);
+fact(node3.dataContainer.state.HasData n3);
+eq(n3.start, 0);
+fact(node4.dataContainer.state.HasData n4);
+eq(n4.start, 0);
+fact(dc5.state.HasData n5);
+n5.start.specify(0);
+
+fact(uav.navigator.At firstPosition);
+firstPosition.at.specify(base.location);
+
+goal(uav.navigator.At endPosition);
+endPosition.at.specify(base.location);
+
+goal(base.RecievedDataPred transportedData2);
+transportedData2.data.specify(data5);
+
+transportedData2 after firstPosition;
+transportedData2 ends_before endPosition;
+
+leq(0, firstPosition.start);
+leq(endPosition.end, 100);
+*/
