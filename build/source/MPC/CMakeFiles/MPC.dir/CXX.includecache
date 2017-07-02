@@ -60,6 +60,22 @@ acado_optimal_control.hpp
 LMModel.h
 /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/LMModel.h
 
+/home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/SimpleMPC.cpp
+SimpleMPC.h
+/home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/SimpleMPC.h
+
+/home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/SimpleMPC.h
+ALMPC.h
+/home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/ALMPC.h
+SimpleModel.h
+/home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/SimpleModel.h
+iostream
+/home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/iostream
+
+/home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/SimpleModel.h
+LMModel.h
+/home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/LMModel.h
+
 /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/main.cpp
 ALMPC.h
 /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/ALMPC.h
@@ -71,6 +87,8 @@ testFunctions.h
 /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/testFunctions.h
 ALMPC.h
 /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/ALMPC.h
+SimpleMPC.h
+/home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/SimpleMPC.h
 LMModelLinear.h
 /home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/LMModelLinear.h
 

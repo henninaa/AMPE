@@ -206,6 +206,33 @@ source/LMModelLinear.cpp.s:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/LMModelLinear.cpp.s
 .PHONY : source/LMModelLinear.cpp.s
 
+source/SimpleMPC.o: source/SimpleMPC.cpp.o
+
+.PHONY : source/SimpleMPC.o
+
+# target to build an object file
+source/SimpleMPC.cpp.o:
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/SimpleMPC.cpp.o
+.PHONY : source/SimpleMPC.cpp.o
+
+source/SimpleMPC.i: source/SimpleMPC.cpp.i
+
+.PHONY : source/SimpleMPC.i
+
+# target to preprocess a source file
+source/SimpleMPC.cpp.i:
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/SimpleMPC.cpp.i
+.PHONY : source/SimpleMPC.cpp.i
+
+source/SimpleMPC.s: source/SimpleMPC.cpp.s
+
+.PHONY : source/SimpleMPC.s
+
+# target to generate assembly for a file
+source/SimpleMPC.cpp.s:
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/SimpleMPC.cpp.s
+.PHONY : source/SimpleMPC.cpp.s
+
 source/main.o: source/main.cpp.o
 
 .PHONY : source/main.o
@@ -251,6 +278,9 @@ help:
 	@echo "... source/LMModelLinear.o"
 	@echo "... source/LMModelLinear.i"
 	@echo "... source/LMModelLinear.s"
+	@echo "... source/SimpleMPC.o"
+	@echo "... source/SimpleMPC.i"
+	@echo "... source/SimpleMPC.s"
 	@echo "... source/main.o"
 	@echo "... source/main.i"
 	@echo "... source/main.s"

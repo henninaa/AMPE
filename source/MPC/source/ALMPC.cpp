@@ -9,6 +9,10 @@ LMMPC::LMMPC() {
 
 LMMPC::~LMMPC(){
 
+	delete model;
+	delete coefficientMatrix;
+	delete referenceFunction;
+
 }
 
 void LMMPC::setModel(LMModel * model){
@@ -23,9 +27,7 @@ void LMMPC::setup(double horizon, double stepLength, double initialX, double ini
 	this->horizon = horizon;
 	this->stepLength = stepLength;
 
-	model = new LMModelLinear();
-	model->createModel();
-	model->printAllParameters();
+	setupModel();
 
 	setupReferenceFunction();
 	
@@ -74,15 +76,15 @@ void LMMPC::simulate(double duration){
 
 void LMMPC::simulate(double duration, ACADO::DVector initialState){
 	
-	//createReferenceTrajectory();
+	createReferenceTrajectory();
 
-	ACADO::VariablesGrid path;
+	/*ACADO::VariablesGrid path;
 	ACADO::DVector vector = ACADO::DVector(referenceFunctionDimention);
 	vector.setAll(0.0);
 	vector(0) = 18.0*30.0;
 	path.addVector(vector, 0.0);
 	referenceTrajectory = new ACADO::StaticReferenceTrajectory(path);
-	referencePath = path;
+	referencePath = path;*/
 	referencePath.print();
 
 	controller->setReferenceTrajectory(*referenceTrajectory);
@@ -98,41 +100,7 @@ void LMMPC::simulate(double duration, ACADO::DVector initialState){
 	if (simulator->run( ) != ACADO::SUCCESSFUL_RETURN)
 		exit( EXIT_FAILURE );
 
-	ACADO::VariablesGrid diffStates;
-	if (simulator->getProcessDifferentialStates( diffStates ) != ACADO::SUCCESSFUL_RETURN)
-		exit( EXIT_FAILURE );
-
-	ACADO::VariablesGrid feedbackControl;
-	if (simulator->getFeedbackControl( feedbackControl ) != ACADO::SUCCESSFUL_RETURN)
-		exit( EXIT_FAILURE );
-
-	ACADO::GnuplotWindow window;
-		window.addSubplot( diffStates(0),   "n" );
-		window.addSubplot( diffStates(1),   "e" );
-		window.addSubplot( diffStates(2),   "d" );
-		window.addSubplot( diffStates(3),   "u" );
-		window.addSubplot( diffStates(4),   "v" );
-		window.addSubplot( diffStates(5),   "w" );
-		window.addSubplot( diffStates(13),   "delta_e" );
-		window.addSubplot( diffStates(14),   "delta_a" );
-		window.addSubplot( diffStates(15),   "delta_r" );
-		window.addSubplot( diffStates(16),   "delta_t" );
-		window.plot();
-	ACADO::GnuplotWindow window2;
-		window2.addSubplot( diffStates(9),   "p" );
-		window2.addSubplot( diffStates(11),   "q" );
-		window2.addSubplot( diffStates(10),   "r" );
-		window2.addSubplot( diffStates(7),   "phi" );
-		window2.addSubplot( diffStates(6),   "theta" );
-		window2.addSubplot( diffStates(8),   "psi" );
-		window2.plot();
-	ACADO::GnuplotWindow window1;
-		window1.addSubplot( feedbackControl(0),   "delta_e" );
-		window1.addSubplot( feedbackControl(1),   "delta_a" );
-		window1.addSubplot( feedbackControl(2),   "delta_r" );
-		window1.addSubplot( feedbackControl(3),   "delta_t" );
-		window1.plot();
-	diffStates.print();
+	plotSimulation();
 
 }
 
@@ -181,6 +149,8 @@ void LMMPC::resetWaypoints(){
 //-----------------------------------Private functions
 
 void LMMPC::setupReferenceFunction(){
+
+	std::cout <<"\n\nfeil\n\n";
 
 	referenceFunction = new ACADO::Function();
 
@@ -231,6 +201,54 @@ void LMMPC::setupOCP(double horizon, double stepLength){
 	ocp->subjectTo(-0.3 <= model->delta_eDot <= 0.3);
 	ocp->subjectTo(-0.3 <= model->delta_rDot <= 0.3);
 	ocp->subjectTo(-0.3 <= model->delta_aDot <= 0.3);
+}
+
+void LMMPC::setupModel(){
+
+	model = new LMModelLinear();
+	model->createModel();
+	model->printAllParameters();
+
+}
+
+void LMMPC::plotSimulation(){
+	
+
+	ACADO::VariablesGrid diffStates;
+	if (simulator->getProcessDifferentialStates( diffStates ) != ACADO::SUCCESSFUL_RETURN)
+		exit( EXIT_FAILURE );
+
+	ACADO::VariablesGrid feedbackControl;
+	if (simulator->getFeedbackControl( feedbackControl ) != ACADO::SUCCESSFUL_RETURN)
+		exit( EXIT_FAILURE );
+
+	ACADO::GnuplotWindow window;
+		window.addSubplot( diffStates(0),   "n" );
+		window.addSubplot( diffStates(1),   "e" );
+		window.addSubplot( diffStates(2),   "d" );
+		window.addSubplot( diffStates(3),   "u" );
+		window.addSubplot( diffStates(4),   "v" );
+		window.addSubplot( diffStates(5),   "w" );
+		window.addSubplot( diffStates(13),   "delta_e" );
+		window.addSubplot( diffStates(14),   "delta_a" );
+		window.addSubplot( diffStates(15),   "delta_r" );
+		window.addSubplot( diffStates(16),   "delta_t" );
+		window.plot();
+	ACADO::GnuplotWindow window2;
+		window2.addSubplot( diffStates(9),   "p" );
+		window2.addSubplot( diffStates(11),   "q" );
+		window2.addSubplot( diffStates(10),   "r" );
+		window2.addSubplot( diffStates(7),   "phi" );
+		window2.addSubplot( diffStates(6),   "theta" );
+		window2.addSubplot( diffStates(8),   "psi" );
+		window2.plot();
+	ACADO::GnuplotWindow window1;
+		window1.addSubplot( feedbackControl(0),   "delta_e" );
+		window1.addSubplot( feedbackControl(1),   "delta_a" );
+		window1.addSubplot( feedbackControl(2),   "delta_r" );
+		window1.addSubplot( feedbackControl(3),   "delta_t" );
+		window1.plot();
+	diffStates.print();
 }
 
 void LMMPC::getDubinsPath(std::vector<ACADO::DVector> wps){

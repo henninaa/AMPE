@@ -30,7 +30,7 @@ public:
 	void deleteWaypoint(double time);
 	void resetWaypoints(); // deletes wp list
 
-private:
+protected:
 
 	double horizon;
 	double stepLength;
@@ -53,8 +53,10 @@ private:
 	ACADO::SimulationEnvironment * simulator;
 	ACADO::OutputFcn * simulatorOutput;
 
-	void setupReferenceFunction();
-	void setupOCP(double horizon, double sttepLenght);
+	virtual void setupReferenceFunction();
+	virtual void setupOCP(double horizon, double sttepLenght);
+	virtual void setupModel();
+	virtual void plotSimulation();
 	void createReferenceTrajectory();
 	void getDubinsPath(std::vector<ACADO::DVector> wps);
 	void completeStep();

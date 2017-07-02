@@ -7,7 +7,7 @@ int main(int argc, char const *argv[])
 {
 	/* code */
 
-	testSimulate();
+	testSimpleSimulate();
 	//testFlat();
 
 	return 0;

@@ -1,10 +1,11 @@
 #pragma once
 #include "ALMPC.h"
+#include "SimpleMPC.h"
 #include "LMModelLinear.h"
 
 void testSimulate(){
 
-	LMMPC * mpc = new LMMPC();
+	LMMPC * mpc = new SimpleMPC();
 	mpc->setup(10.0, 0.25);
 	mpc->addWaypoint(0.0, 0.0, 0.0, 0.0);
 	mpc->addWaypoint(18.0*30, 0.0, 0.0, 30.0);
@@ -18,7 +19,24 @@ void testSimulate(){
 	s0(9) = 0;
 	s0(12) = 0;
 	std::cout << "starting simulation..1\n";
-	mpc->simulate(0.75, s0);
+	mpc->simulate(20, s0);
+}
+
+void testSimpleSimulate(){
+
+	LMMPC * mpc = new SimpleMPC();
+	mpc->setup(10.0, 0.25);
+	mpc->addWaypoint(0.0, 0.0, 0.0, 0.0);
+	mpc->addWaypoint(18.0*30, 0.0, 0.0, 30.0);
+	mpc->addWaypoint(18.0*60, 20.0, 0.0, 60.0);
+	//mpc->addWaypoint(165.0, 30.0, 0.0, 9.0);
+	std::cout << "Waypoints inserted\n";
+
+	ACADO::DVector s0(9);
+	s0.setAll(0.0);
+
+	std::cout << "starting simulation..1\n";
+	mpc->simulate(20, s0);
 }
 
 

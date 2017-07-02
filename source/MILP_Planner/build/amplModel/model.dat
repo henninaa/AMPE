@@ -49,3 +49,17 @@ param waypoints: 1 2 3:=
 
 param M_finnish := 60;
 param gamma_finnish := 10;
+
+
+
+param dx :=	2;	#
+param dy := 2;	#	-anti-collition safety distance
+param dz := 5;	#
+
+param MCol := 10000;	#anti-collision big M
+
+param cx := 7;	#
+param cy := 7;	#	-anti-collition safety distance
+param cz := 7;	#
+
+param MConDim := 100; # big M for casting conectivityDimentional to bool

@@ -46,6 +46,18 @@ param gamma_finnish;  		# positive weight for J_finnish
 
 param M_con;
 
+param dx;	#
+param dy;	#	-anti-collition safety distance
+param dz;	#
+
+param MCol; # Big M andti-collision
+
+param cx;	#
+param cy;	#	-connectivity distance
+param cz;	#
+
+param MConDim; # big M for casting conectivityDimentional to bool
+
 #-------- Vars
 
 var v {p in 1..np, i in 0..N, row in Dim};		#velocity in vehicle, time, row
@@ -78,6 +90,9 @@ var bwp{p in 1..np, i in 0..N, w in 1..W} binary;
 
 var bsensor{p in 1..np, i in 0..N} binary;
 
+var bCol{p in 1..np-1, q in 2..np, i in 1..N, row in 1..3, col in 1..2}; #big M anti-collision 
+
+var bconnectivityDimentional{p in 1..np, q in 1..np, i in 0..N, d in Dim} binary;
 var bconnectivity{p in 1..np, q in 1..np, i in 0..N} binary;
 
 #-------- model
@@ -201,6 +216,23 @@ subject to waypointHitN{p in  1..np, i in 1..N, w in 1..W, j in Dim}:
 
 #anti collision constraints
 
+subject to antiCollisionX1{p in 1..np-1, q in p+1..np, i in 1..N} :
+pos[p,i,1] - pos[q,i,1] >= dx - MCol * bCol[p,q,i,1,1];
+subject to antiCollisionX2{p in 1..np-1, q in p+1..np, i in 1..N} :
+pos[p,i,1] - pos[q,i,1] <= MCol * bCol[p,q,i,1,2] - dx;
+
+subject to antiCollisionY1{p in 1..np-1, q in p+1..np, i in 1..N} :
+pos[p,i,2] - pos[q,i,2] >= dy - MCol * bCol[p,q,i,2,1];
+subject to antiCollisionY2{p in 1..np-1, q in p+1..np, i in 1..N} :
+pos[p,i,2] - pos[q,i,2] <= MCol * bCol[p,q,i,2,2] - dy;
+
+subject to antiCollisionZ1{p in 1..np-1, q in p+1..np, i in 1..N} :
+pos[p,i,3] - pos[q,i,3] >= dz - MCol * bCol[p,q,i,3,1];
+subject to antiCollisionZ2{p in 1..np-1, q in p+1..np, i in 1..N} :
+pos[p,i,3] - pos[q,i,3] <= MCol * bCol[p,q,i,3,2] - dz;
+
+subject to antiCollisionSum{p in 1..np-1, q in p+1..np, i in 1..N} :
+sum{row in 1..3, col in 1..2}(bCol[p,q,i,row,col]) <= 5;
 
 
  #Data gathering constraints
@@ -224,5 +256,5 @@ sum{t in 1..W}(lambda_sensor[p,i,t]) = bsensor[p,i];
 
 #connectivity constraints
 
-subject to connectivityDistance{p in 1..np, q in 1..np, i in 0..N}:
-UAV_distance[p,q,i] = 
+#subject to connectivityDistance{p in 1..np, q in 1..np, i in 0..N}:
+#UAV_distance[p,q,i] = 

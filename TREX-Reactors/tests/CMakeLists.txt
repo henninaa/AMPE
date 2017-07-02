@@ -35,7 +35,24 @@
 
 trex_plugin(CrudePath 
   CRCrudePath.cpp
+  CrudePathModule.cpp
   # headers
   CRCrudePath.h
+  CrudePathModule.h
+  shared.h
   )
 target_link_libraries(CrudePath_pg TREXtransaction)
+
+trex_plugin(RefinedPath 
+  IRRefinedPath.cpp
+  # headers
+  IRRefinedPath.h
+  )
+target_link_libraries(RefinedPath_pg TREXtransaction)
+
+trex_plugin(Navigator 
+  IRNavigator.cpp
+  # headers
+  IRNavigator.h
+  )
+target_link_libraries(Navigator_pg TREXtransaction)

@@ -3,6 +3,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/MPC.dir/source/main.cpp.o"
   "CMakeFiles/MPC.dir/source/LMModel.cpp.o"
   "CMakeFiles/MPC.dir/source/LMModelLinear.cpp.o"
+  "CMakeFiles/MPC.dir/source/SimpleMPC.cpp.o"
   "../../../source/MPC/build/MPC.pdb"
   "../../../source/MPC/build/MPC"
 )
