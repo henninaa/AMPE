@@ -9,6 +9,7 @@ class SimpleMPC
 {
 public:
 	SimpleMPC() : LMMPC() {}
+	SimpleMPC(LMModel * model) : LMMPC(model) {}
 	~SimpleMPC() {}
 
 private:
@@ -17,5 +18,8 @@ private:
 	void setupOCP(double horizon, double stepLength);
 	void setupModel();
 	void plotSimulation();
+	void createReferenceTrajectory();
+
+	ACADO::Control epsilon;
 
 };

@@ -5,6 +5,13 @@
 LMMPC::LMMPC() {
 
 	referenceTrajectory = nullptr;
+	model = nullptr;
+}
+
+LMMPC::LMMPC(LMModel * model) {
+
+	this->model = model;
+
 }
 
 LMMPC::~LMMPC(){
@@ -27,7 +34,8 @@ void LMMPC::setup(double horizon, double stepLength, double initialX, double ini
 	this->horizon = horizon;
 	this->stepLength = stepLength;
 
-	setupModel();
+	if (model == nullptr)
+		setupModel();
 
 	setupReferenceFunction();
 	

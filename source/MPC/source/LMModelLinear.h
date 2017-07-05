@@ -15,6 +15,10 @@ public:
 	~LMModelLinear() {}
 
 	bool createModel();
+
+	ACADO::DifferentialState N, E, D, uHat, vHat, wHat, thetaHat, phiHat, psiHat, pHat, rHat, qHat, hHat,  delta_eHat, delta_aHat, delta_rHat, delta_tHat;
+	ACADO::IntermediateState u, v, w, theta, phi, psi, p, r, q, h,  delta_e, delta_a, delta_r, delta_t;
+	ACADO::Control delta_eDot, delta_aDot, delta_rDot, delta_tDot;
 private:
 
 	double					Y_v, Y_p, Y_r, Y_delta_a, Y_delta_r,

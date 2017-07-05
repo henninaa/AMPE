@@ -13,6 +13,7 @@ class LMMPC
 {
 public:
 	LMMPC();
+	LMMPC(LMModel * model);
 	~LMMPC();
 	class Waypoint;
 
@@ -57,7 +58,7 @@ protected:
 	virtual void setupOCP(double horizon, double sttepLenght);
 	virtual void setupModel();
 	virtual void plotSimulation();
-	void createReferenceTrajectory();
+	virtual void createReferenceTrajectory();
 	void getDubinsPath(std::vector<ACADO::DVector> wps);
 	void completeStep();
 

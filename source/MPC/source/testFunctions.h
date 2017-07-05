@@ -24,19 +24,31 @@ void testSimulate(){
 
 void testSimpleSimulate(){
 
-	LMMPC * mpc = new SimpleMPC();
+	SimpleModel model;
+	model.createModel();
+
+	LMMPC * mpc1 = new SimpleMPC(&model);
+	LMMPC * mpc = new SimpleMPC(&model);
+	mpc1->setup(10.0, 0.25);
+	mpc1->addWaypoint(0.0, 0.0, 0.0, 0.0);
+	mpc1->addWaypoint(18.0*10, 0.0, 0.0, 10.0);
+	mpc1->addWaypoint(18.0*10, 10*18.0, 0.0, 20.0);
+	mpc1->addWaypoint(10*18.0, 30*18.0, 0.0, 40.0);
 	mpc->setup(10.0, 0.25);
 	mpc->addWaypoint(0.0, 0.0, 0.0, 0.0);
-	mpc->addWaypoint(18.0*30, 0.0, 0.0, 30.0);
-	mpc->addWaypoint(18.0*60, 20.0, 0.0, 60.0);
-	//mpc->addWaypoint(165.0, 30.0, 0.0, 9.0);
+	mpc->addWaypoint(18.0*10, 0.0, 0.0, 10.0);
+	mpc->addWaypoint(18.0*10, 10*18.0, 0.0, 20.0);
+	mpc->addWaypoint(10*18.0, 30*18.0, 0.0, 40.0);
 	std::cout << "Waypoints inserted\n";
 
-	ACADO::DVector s0(9);
+	ACADO::DVector s0(10);
 	s0.setAll(0.0);
+	s0(3) = 18.0;
+	//s0(6) = 1.6;
 
 	std::cout << "starting simulation..1\n";
-	mpc->simulate(20, s0);
+	mpc->simulate(30, s0);
+	//mpc1->simulate(10, s0);
 }
 
 

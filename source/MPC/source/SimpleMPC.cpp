@@ -8,10 +8,12 @@ void SimpleMPC::setupReferenceFunction(){
 
 	referenceFunction = new ACADO::Function();
 
+	std::cout << "\nFØR\n";
+
 	(*referenceFunction) << model->N;
 	(*referenceFunction) << model->E;
 	(*referenceFunction) << model->D;
-	(*referenceFunction) << model->delta_eDot;
+	(*referenceFunction) << model->delta_aDot;
 
 
 	referenceFunctionDimention = 4;
@@ -22,7 +24,9 @@ void SimpleMPC::setupReferenceFunction(){
 	for (int i = 0; i < referenceFunctionDimention; i++)
 		(*coefficientMatrix)(i,i) = 1.0f;
 
-	(*coefficientMatrix)(3,3) = 10000.0f;
+	(*coefficientMatrix)(3,3) = 1.0f;
+
+	std::cout << "\netter\n";
 
 }
 
@@ -40,7 +44,7 @@ void SimpleMPC::setupOCP(double horizon, double stepLength){
 	//ocp->subjectTo(-0.3 <= model->psi <= 0.3);
 	//ocp->subjectTo(-10 <= model->N + model->delta_eDot <= 10.0);
 	ocp->subjectTo(-1 <= model->delta_tDot <= 1);
-	ocp->subjectTo(-0.3 <= model->delta_rDot <= 0.3);
+	ocp->subjectTo(-0.3 <= model->u <= 0.3);
 }
 
 void SimpleMPC::setupModel(){
@@ -115,3 +119,42 @@ void SimpleMPC::plotSimulation(){
 	diffStates.print();
 
 }*/
+
+void SimpleMPC::createReferenceTrajectory(){
+
+	ACADO::VariablesGrid path;
+	std::cout << waypoints.size() ;
+
+	int nWP = waypoints.size();
+	std::cout << "creating trajectory\n";
+	double ts = 0.0;
+	double te = 0.0;
+	double td = 0.0;
+	double angle = 0.0;
+	ACADO::DVector vector = ACADO::DVector(referenceFunctionDimention);
+
+	for (int i = 0; i < nWP-1; i++){
+		ts = waypoints[i].time;
+		te = waypoints[i+1].time;
+		td = te - ts;
+		std::cout << td;
+		angle = atan2(waypoints[i+1].y - waypoints[i].y, waypoints[i+1].x - waypoints[i].x);
+		for (double t = 0.0; t < td; t += stepLength){
+			std::cout << stepLength;
+			vector.setAll(0);
+			vector(0) = (waypoints[i].x * ((td - t) / td) ) + (waypoints[i+1].x * (t / td));
+			vector(1) = (waypoints[i].y * ((td - t) / td) ) + (waypoints[i+1].y * (t / td));
+			vector(2) = (waypoints[i].z * ((td - t) / td) ) + (waypoints[i+1].z * (t / td));
+			//TODO: fix angle to match revolution (n*2pi) of yaw
+		
+			path.addVector(vector, t + ts);
+		}
+	}
+	this->referencePath = path;
+
+	if (referenceTrajectory != nullptr)
+		delete referenceTrajectory;
+
+referenceTrajectory = new ACADO::StaticReferenceTrajectory(path);
+
+}
