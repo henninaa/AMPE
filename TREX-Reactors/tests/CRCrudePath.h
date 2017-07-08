@@ -29,6 +29,8 @@ public:
 
 	bool synchronize();
 	void notify(TREX::transaction::Observation const & obs);
+	bool hasWork();
+	void resume();
 
 private:
 
@@ -47,6 +49,8 @@ private:
 
 	void handleRequest(TREX::transaction::goal_id const & goal);
 
+	void dispatchPlan();
+
 	static TREX::utils::Symbol const UAVTimeline_1;
 	static TREX::utils::Symbol const UAVTimeline_2;
 	static TREX::utils::Symbol const UAVTimeline_3;
@@ -58,8 +62,18 @@ private:
 	int nodeIdCounter;
 
 	std::vector<UAVTimelinePair> uavTimelinePairs;
+	bool planReady;
+	bool hasWorkThisTick;
+	bool deliberationNeedsStart;
+	bool const moduleSwitch = true;
+	int currentTick;
+	double stepLength;
+	double sampleTime;
+	int planStartedAt;
 
 	CrudePathModule module;
+
+	void printPlan();
 };
 
 

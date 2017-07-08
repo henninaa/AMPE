@@ -56,16 +56,27 @@ CMAKE_BINARY_DIR = /home/henning/Documents/Masters_Thesis/AMPE/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
 
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
 
-.PHONY : edit_cache/fast
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
 
 # Special rule for the target rebuild_cache
 rebuild_cache:
@@ -77,6 +88,39 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: install/local
+
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: install/strip
+
+.PHONY : install/strip/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -125,6 +169,21 @@ MPC/fast:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/build
 .PHONY : MPC/fast
 
+# Convenience name for target.
+source/MPC/CMakeFiles/MPC_shared.dir/rule:
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f CMakeFiles/Makefile2 source/MPC/CMakeFiles/MPC_shared.dir/rule
+.PHONY : source/MPC/CMakeFiles/MPC_shared.dir/rule
+
+# Convenience name for target.
+MPC_shared: source/MPC/CMakeFiles/MPC_shared.dir/rule
+
+.PHONY : MPC_shared
+
+# fast build rule for target.
+MPC_shared/fast:
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/build
+.PHONY : MPC_shared/fast
+
 source/ALMPC.o: source/ALMPC.cpp.o
 
 .PHONY : source/ALMPC.o
@@ -132,6 +191,7 @@ source/ALMPC.o: source/ALMPC.cpp.o
 # target to build an object file
 source/ALMPC.cpp.o:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.o
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/source/ALMPC.cpp.o
 .PHONY : source/ALMPC.cpp.o
 
 source/ALMPC.i: source/ALMPC.cpp.i
@@ -141,6 +201,7 @@ source/ALMPC.i: source/ALMPC.cpp.i
 # target to preprocess a source file
 source/ALMPC.cpp.i:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.i
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/source/ALMPC.cpp.i
 .PHONY : source/ALMPC.cpp.i
 
 source/ALMPC.s: source/ALMPC.cpp.s
@@ -150,6 +211,7 @@ source/ALMPC.s: source/ALMPC.cpp.s
 # target to generate assembly for a file
 source/ALMPC.cpp.s:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/ALMPC.cpp.s
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/source/ALMPC.cpp.s
 .PHONY : source/ALMPC.cpp.s
 
 source/LMModel.o: source/LMModel.cpp.o
@@ -159,6 +221,7 @@ source/LMModel.o: source/LMModel.cpp.o
 # target to build an object file
 source/LMModel.cpp.o:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/LMModel.cpp.o
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/source/LMModel.cpp.o
 .PHONY : source/LMModel.cpp.o
 
 source/LMModel.i: source/LMModel.cpp.i
@@ -168,6 +231,7 @@ source/LMModel.i: source/LMModel.cpp.i
 # target to preprocess a source file
 source/LMModel.cpp.i:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/LMModel.cpp.i
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/source/LMModel.cpp.i
 .PHONY : source/LMModel.cpp.i
 
 source/LMModel.s: source/LMModel.cpp.s
@@ -177,6 +241,7 @@ source/LMModel.s: source/LMModel.cpp.s
 # target to generate assembly for a file
 source/LMModel.cpp.s:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/LMModel.cpp.s
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/source/LMModel.cpp.s
 .PHONY : source/LMModel.cpp.s
 
 source/LMModelLinear.o: source/LMModelLinear.cpp.o
@@ -186,6 +251,7 @@ source/LMModelLinear.o: source/LMModelLinear.cpp.o
 # target to build an object file
 source/LMModelLinear.cpp.o:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/LMModelLinear.cpp.o
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/source/LMModelLinear.cpp.o
 .PHONY : source/LMModelLinear.cpp.o
 
 source/LMModelLinear.i: source/LMModelLinear.cpp.i
@@ -195,6 +261,7 @@ source/LMModelLinear.i: source/LMModelLinear.cpp.i
 # target to preprocess a source file
 source/LMModelLinear.cpp.i:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/LMModelLinear.cpp.i
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/source/LMModelLinear.cpp.i
 .PHONY : source/LMModelLinear.cpp.i
 
 source/LMModelLinear.s: source/LMModelLinear.cpp.s
@@ -204,6 +271,7 @@ source/LMModelLinear.s: source/LMModelLinear.cpp.s
 # target to generate assembly for a file
 source/LMModelLinear.cpp.s:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/LMModelLinear.cpp.s
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/source/LMModelLinear.cpp.s
 .PHONY : source/LMModelLinear.cpp.s
 
 source/SimpleMPC.o: source/SimpleMPC.cpp.o
@@ -213,6 +281,7 @@ source/SimpleMPC.o: source/SimpleMPC.cpp.o
 # target to build an object file
 source/SimpleMPC.cpp.o:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/SimpleMPC.cpp.o
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/source/SimpleMPC.cpp.o
 .PHONY : source/SimpleMPC.cpp.o
 
 source/SimpleMPC.i: source/SimpleMPC.cpp.i
@@ -222,6 +291,7 @@ source/SimpleMPC.i: source/SimpleMPC.cpp.i
 # target to preprocess a source file
 source/SimpleMPC.cpp.i:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/SimpleMPC.cpp.i
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/source/SimpleMPC.cpp.i
 .PHONY : source/SimpleMPC.cpp.i
 
 source/SimpleMPC.s: source/SimpleMPC.cpp.s
@@ -231,6 +301,7 @@ source/SimpleMPC.s: source/SimpleMPC.cpp.s
 # target to generate assembly for a file
 source/SimpleMPC.cpp.s:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/SimpleMPC.cpp.s
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/source/SimpleMPC.cpp.s
 .PHONY : source/SimpleMPC.cpp.s
 
 source/main.o: source/main.cpp.o
@@ -240,6 +311,7 @@ source/main.o: source/main.cpp.o
 # target to build an object file
 source/main.cpp.o:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/main.cpp.o
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/source/main.cpp.o
 .PHONY : source/main.cpp.o
 
 source/main.i: source/main.cpp.i
@@ -249,6 +321,7 @@ source/main.i: source/main.cpp.i
 # target to preprocess a source file
 source/main.cpp.i:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/main.cpp.i
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/source/main.cpp.i
 .PHONY : source/main.cpp.i
 
 source/main.s: source/main.cpp.s
@@ -258,6 +331,7 @@ source/main.s: source/main.cpp.s
 # target to generate assembly for a file
 source/main.cpp.s:
 	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC.dir/build.make source/MPC/CMakeFiles/MPC.dir/source/main.cpp.s
+	cd /home/henning/Documents/Masters_Thesis/AMPE/build && $(MAKE) -f source/MPC/CMakeFiles/MPC_shared.dir/build.make source/MPC/CMakeFiles/MPC_shared.dir/source/main.cpp.s
 .PHONY : source/main.cpp.s
 
 # Help Target
@@ -266,9 +340,14 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... edit_cache"
 	@echo "... MPC"
+	@echo "... MPC_shared"
+	@echo "... install/local"
+	@echo "... install/strip"
 	@echo "... source/ALMPC.o"
 	@echo "... source/ALMPC.i"
 	@echo "... source/ALMPC.s"

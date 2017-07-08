@@ -14,6 +14,8 @@ set Dim := 1..3;		#ENU
 param initPos1{i in Dim};
 param initPos2{i in Dim};
 
+param initPos{p in 1..np, i in Dim};
+
 param x_min;
 param x_max;
 param y_min;
@@ -58,10 +60,12 @@ param cz;	#
 
 param MConDim; # big M for casting conectivityDimentional to bool
 
+param wind{j in Dim};
+
 #-------- Vars
 
 var v {p in 1..np, i in 0..N, row in Dim};		#velocity in vehicle, time, row
-var V {p in 1..np, i in 0..N};		#absolute velocity in vehicle, time, row
+var V {p in 1..np, i in 0..N};					#absolute velocity in vehicle, time, row
 
 var pos {p in 1..np, i in 0..N, row in Dim};
 
@@ -104,16 +108,16 @@ minimize objective: J_finnish + Jacc;
 
 #initialPosition
 
-subject to initPos1constraint{r in Dim}:
-pos[1,0,r] = initPos1[r];
+subject to initPos1constraint{p in 1..np, r in Dim}:
+pos[p,0,r] = initPos[p,r];
 
-subject to initPos2constraint{r in Dim}:
-pos[2,0,r] = initPos2[r];
+#subject to initPos2constraint{r in Dim}:
+#pos[2,0,r] = initPos2[r];
 
 #UAV model
 
 subject to model{p in 1..np, i in 0..N-1, row in Dim}:
-pos[p, i+1, row] = pos[p,i,row] + deltat * v[p,i,row];
+pos[p, i+1, row] = pos[p,i,row] + deltat * (v[p,i,row] + wind[row]);
 
 #velocity constraints
 

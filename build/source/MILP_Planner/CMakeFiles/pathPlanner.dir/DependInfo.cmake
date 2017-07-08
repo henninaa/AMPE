@@ -10,6 +10,12 @@ set(CMAKE_DEPENDS_CHECK_CXX
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
+# Preprocessor definitions for this target.
+set(CMAKE_TARGET_DEFINITIONS_CXX
+  "AMPLMODELFOLDERPATH=\"/home/henning/Documents/Masters_Thesis/AMPE/source/MILP_Planner/build/amplModel/\""
+  "UAVPARAMLOCATION=\"/home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/\""
+  )
+
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/home/henning/Documents/prosjektet/ampl/amplapi/include"

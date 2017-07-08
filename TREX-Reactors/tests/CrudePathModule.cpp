@@ -1,5 +1,30 @@
 #include "CrudePathModule.h"
 
+CrudePathModule::CrudePathModule() : planner(100, 2.0), sampleTime(2)
+{
+
+	planner.setModelParam("deltat", sampleTime);
+
+}
+
+void CrudePathModule::run(){
+
+
+	std::vector<std::vector<double> > wp = std::vector<std::vector<double> >(4, std::vector<double>(3, 100));
+	wp[0][0] = 0;	wp[0][1] = 0;	wp[0][2] = 100;
+	wp[1][0] = 100;	wp[1][1] = 100;	wp[1][2] = 200;
+	wp[2][0] = 400;	wp[2][1] = 200;	wp[2][2] = 400;
+	wp[3][0] = 300;	wp[3][1] = 200;	wp[3][2] = 100;
+
+	setUAVPositions();
+
+	planner.runAsync(getWaypointsVector());
+
+	//bool fin = false;
+	//std::vector<std::vector<std::vector<double> > >pathWp;
+
+
+}
 
 void CrudePathModule::addUAV(double n0, double e0, double d0, int id) {
 	
@@ -41,6 +66,58 @@ bool CrudePathModule::moveUAVTo(double n, double e, double d, int id){
 		}
 	if (it != UAVs.end()){
 		it->setPosition(n,e,d);
+		checkDistances(*it);
+		return true;
+	}
+	else
+		return false; 
+
+}
+
+bool CrudePathModule::moveUAVN(double n, int id){
+
+	auto it = UAVs.begin();
+	for (it; it != UAVs.end(); it++)
+		if (it->id == id){
+			break;
+		}
+	if (it != UAVs.end()){
+		it->n = n;
+		checkDistances(*it);
+		return true;
+	}
+	else
+		return false; 
+
+}
+
+bool CrudePathModule::moveUAVE(double e, int id){
+
+	auto it = UAVs.begin();
+	for (it; it != UAVs.end(); it++)
+		if (it->id == id){
+			break;
+		}
+	if (it != UAVs.end()){
+		it->e = e;
+		checkDistances(*it);
+		return true;
+	}
+	else
+		return false; 
+
+}
+
+bool CrudePathModule::moveUAVD(double d, int id){
+
+	auto it = UAVs.begin();
+	for (it; it != UAVs.end(); it++)
+		if (it->id == id){
+			break;
+		}
+	if (it != UAVs.end()){
+		it->d = d;
+		checkDistances(*it);
 		return true;
 	}
 	else
@@ -154,4 +231,109 @@ int CrudePathModule::numberOfUAVs(){
 }
 int CrudePathModule::numberOfNodes(){
 	return nodes.size();
+}
+
+int CrudePathModule::getNumberOfActiveNodes(){
+
+	int result = 0;
+	for(auto it = nodes.begin(); it != nodes.end(); it++)
+		if (it->isActive)
+			result++;
+
+	return result;
+}
+
+std::vector<std::vector<double> > CrudePathModule::getWaypointsVector(){
+
+	std::vector<std::vector<double> > wps = std::vector<std::vector<double> >(getNumberOfActiveNodes(), std::vector<double>(3, 0.0));
+
+	int i = -1;
+	for (auto it = nodes.begin(); it != nodes.end(); it++){
+
+		if(!it->isActive)
+			continue;
+		else
+			i++;
+
+		wps[i][0] = it->n;
+		wps[i][1] = it->e;
+		wps[i][2] = it->d;
+
+	}
+	
+	return wps;
+
+}
+
+
+void CrudePathModule::checkDistances(UAV & uav){
+
+	double distance;
+
+	for (auto it = nodes.begin(); it != nodes.end(); it++){
+
+		distance = std::sqrt( std::pow(uav.n - it->n, 2) + std::pow(uav.e - it->e, 2) + std::pow(uav.d - it->d, 2));
+
+		if (distance < NodeHitDistance)
+			it->isActive = false;
+
+
+	}
+
+}
+
+void CrudePathModule::setUAVPositions(){
+
+	std::vector<std::vector<double> > pos = std::vector<std::vector<double> >(UAVs.size(), std::vector<double>(3, 0.0));
+
+	int i = -1;
+	for (auto it = UAVs.begin(); it != UAVs.end(); it++){
+
+		if(!it->isActive)
+			continue;
+		else
+			i++;
+
+		pos[i][0] = it->n;
+		pos[i][1] = it->e;
+		pos[i][2] = it->d;
+
+	}
+	
+	planner.setUAVPositions(pos);
+
+}
+
+void CrudePathModule::storePath(){
+	//std::cout << "\n" << nodes.size() << " \n";
+	path = planner.getPaths();
+	//std::cout << "\ndbg\n";
+
+}
+
+WP CrudePathModule::getWaypoint(int uavNr, int wpNr){
+
+	WP result(path[uavNr][wpNr][0],
+	path[uavNr][wpNr][1],
+	path[uavNr][wpNr][2],
+	wpNr);
+
+	return result;
+}
+
+int CrudePathModule::getPathSize(){
+
+	if(path.size() == 0)
+		return 0;
+	else
+		return path[0].path.size();
+
+}
+
+	
+void CrudePathModule::setSampleTime(double st){
+
+	sampleTime = st;
+	planner.setModelParam("deltat", st);
+
 }

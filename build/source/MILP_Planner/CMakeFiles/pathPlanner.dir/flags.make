@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_FLAGS =   -std=c++11
 
-CXX_DEFINES = 
+CXX_DEFINES = -DAMPLMODELFOLDERPATH=\"/home/henning/Documents/Masters_Thesis/AMPE/source/MILP_Planner/build/amplModel/\" -DUAVPARAMLOCATION=\"/home/henning/Documents/Masters_Thesis/AMPE/source/MPC/source/\"
 
 CXX_INCLUDES = -I/home/henning/Documents/prosjektet/ampl/amplapi/include 
 

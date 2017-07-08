@@ -2,7 +2,7 @@
 
 LMModel::LMModel(int parameterSet){
 
-	std::string baseLoc = PARAMLOCATION;
+	std::string baseLoc = UAVPARAMLOCATION;
 	switch (parameterSet){
 		case X8PARAMETERS:
 			loadParameters(baseLoc + "params_X8.txt");

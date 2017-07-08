@@ -19,7 +19,12 @@ namespace TREX {
 	void initPlugin() {
     	::s_log->syslog("plugin.lightswitch")<<"RefinedPath loaded."<<std::endl;
     // ::decl;
+    	std::cout << "Init refined path";
+    	
+
     }
+
+    LMModelLinear * IRRefinedPath::linearModel = new LMModelLinear();
 
 	TREX::utils::Symbol const IRRefinedPath::AtPred("At");
 	TREX::utils::Symbol const IRRefinedPath::GoingPred("Going");
@@ -52,9 +57,15 @@ namespace TREX {
 	{
 
 		provide(UAVTimeline);
-		currentX = 0;
+		currentTick = -1;
 		std::cout << "Refined path reactor created for UAV " << TREX::utils::parse_attr<std::string>("1", TeleoReactor::xml_factory::node(arg), "uav_number") << "\n";
 		
+
+		planReady = false;
+		needsWorkThisTick = false;
+		lastTickReceivedPlan = -1;
+		nwpTick = 0;
+		stepLength = 0.25;
 
 	}
 
@@ -62,32 +73,58 @@ namespace TREX {
 		std::cout << "Refined path closed\n";
 	}
 
+	void IRRefinedPath::handleInit(){
+		mpc = new LMMPC(linearModel);
+		mpc->setup(10.0, 0.25);
+		mpc->initializeController();
+
+		mpc->addWaypoint(0.0, 0.0, 0.0, 0.0);
+		mpc->addWaypoint(18.0*15, 0.0, 0.0, 15.0);
+		mpc->addWaypoint(18.0*15, 15 * 18.0, 0.0, 30.0);
+		//mpc->addWaypoint(18.0*15, 45 * 18.0, 0.0, 60.0);
+		mpc->addWaypoint(165.0, 30.0, 0.0, 9.0);
+		std::cout << "Waypoints inserted\n";
+
+	}
+
 	bool IRRefinedPath::synchronize(){
 
-		currentX++;
-		bool hasPosted = false;
+		currentTick++;
 
-		if(currentX > 5){
-			TREX::transaction::Observation obs(UAVTimeline, AtPred);
-		
-			obs.restrictAttribute("X", TREX::transaction::FloatDomain(currentX));
-			obs.restrictAttribute("start", TREX::transaction::IntegerDomain(2));
-			obs.restrictAttribute("end", TREX::transaction::IntegerDomain(2));
-			postObservation(obs);
-			hasPosted = true;
+		if(planReady == true){
+
+			//dispatchGoals();
+			dispatchObservations();
+			planReady = false;
+
+			
+
 		}
-		if(hasPosted)
-		std::cout << "posted observation: X =" << currentX << "\n";
-		
-		if (currentX == jumpAt)
-			currentX += 100;
-
+		if(!needsWorkThisTick){
+				needsWorkThisTick = true;
+			}
+		return true;
+	
 	}
 
 	void IRRefinedPath::notify(TREX::transaction::Observation const & obs){
 
 
 
+
+	}
+
+	bool IRRefinedPath::hasWork(){
+		return needsWorkThisTick;
+	}
+
+	void IRRefinedPath::resume(){
+
+		planReady = true;
+		
+		mpc->step(stepLength * currentTick);
+
+		needsWorkThisTick = false;
 
 	}
 
@@ -99,6 +136,78 @@ namespace TREX {
 			jumpAt = goal->getAttribute("X").domain().getTypedSingleton<float, true>();
 
 
+		if(goal->object() == UAVTimeline){
+			std::cout << "\nUAV received Goal\n";
+			double n,e,d,t;
+				
+				int nVars = 0;
+
+				if (goal->hasAttribute("n")){
+					//std::cout << "Goal N received: " << goal->getAttribute("n").domain().getTypedSingleton<float, true>() << "\n";
+					n = goal->getAttribute("n").domain().getTypedSingleton<float, true>();
+					nVars++;
+				}
+				if(goal->hasAttribute("e")){
+					//std::cout << "Goal E received: " << goal->getAttribute("e").domain().getTypedSingleton<float, true>() << "\n";
+					e = goal->getAttribute("e").domain().getTypedSingleton<float, true>();
+					nVars++;
+				}
+				if(goal->hasAttribute("d")){
+					//std::cout << "Goal D received: " << goal->getAttribute("d").domain().getTypedSingleton<float, true>() << "\n";
+					d = goal->getAttribute("d").domain().getTypedSingleton<float, true>();
+					nVars++;
+				}
+				if(goal->hasAttribute("t")){
+					//std::cout << "Goal t received: " << goal->getAttribute("t").domain().getTypedSingleton<float, true>() << "\n";
+					t = goal->getAttribute("t").domain().getTypedSingleton<float, true>();
+					nVars++;
+				}
+				else
+					std::cout << "Observation is errornous\n";
+
+				if (nVars == 4){
+
+					if(lastTickReceivedPlan < currentTick){
+
+						lastTickReceivedPlan = currentTick;
+						mpc->resetWaypoints();//keepOnlyWaypointsFromTo(0, ((currentTick-1) * stepLength ));
+						nwpTick = 0;
+					}
+
+					mpc->addWaypoint(n, e, d, t);
+					std::cout << "\n Sjekk n:" << n << " e: " << e << " d: " << d << " t: " << t << "\n";
+					nwpTick++;
+
+
+					std::cout << "N waypoints received this tick: " << nwpTick;
+
+
+				}
+				else{
+					std::cout << "\n------------------BUG------IR-HRq---------" << nVars << "\n";
+				}
+
+			}
+
+
+	}
+
+	void IRRefinedPath::dispatchGoals(){
+
+
+
+
+	}
+
+	void IRRefinedPath::dispatchObservations(){
+
+		TREX::transaction::Observation obs = TREX::transaction::Observation(UAVTimeline, "At");
+		obs.restrictAttribute("n", TREX::transaction::FloatDomain(mpc->getCurrentN(), mpc->getCurrentN()));
+		obs.restrictAttribute("e", TREX::transaction::FloatDomain(mpc->getCurrentE(), mpc->getCurrentE()));
+		obs.restrictAttribute("d", TREX::transaction::FloatDomain(mpc->getCurrentD(), mpc->getCurrentD()));
+
+		postObservation(obs);
+		
 	}
 
 

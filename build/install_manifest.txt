@@ -1,0 +1,2 @@
+/usr/local/lib/libMPC_shared.so
+/usr/local/lib/libpathPlanner_shared.so

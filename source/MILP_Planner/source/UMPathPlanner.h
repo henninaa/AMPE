@@ -8,7 +8,7 @@
 #include "UNodeObject.h"
 #include "../../Utillities/Vector3.h"
 
-#define MODELFOLDERPATH 	"amplModel/"
+//#define MODELFOLDERPATH 	"/home/henning/Documents/Masters_Thesis/AMPE/source/MILP_Planner/build/amplModel/"
 #define MODEL				"model.mod"
 #define DATA				"model.dat"
 #define DATACX				"chix.dat"
@@ -20,7 +20,7 @@ class UMPathPlanner
 
 public:
 
-	UMPathPlanner();
+	UMPathPlanner(int missionTime = 100, double stepLength = 2);
 	~UMPathPlanner();
 
 	class ObjectPath
@@ -37,11 +37,15 @@ public:
 
 		unsigned int ID;
 		std::vector<Vector3> path;
+		std::vector<double> time;
 
 		unsigned int getID() { return ID; }
 
 		Vector3 & operator[](int i){
 			return path[i];
+		}
+		double t(int i){
+			return time[i];
 		}
 
 	};
@@ -50,14 +54,20 @@ public:
 	void setModelPath(std::string path);
 	bool setup();
 
-	void run();
-	void runASynchrounous();
+	void run(std::vector<std::vector<double> > waypointsInn);
+	void runAsync(std::vector<std::vector<double> > waypointsInn);
 
 	std::vector<ObjectPath> getPaths();
+
 	ObjectPath getPathForObject(unsigned int ID);
 
 	void setNodes(std::vector<NodeObject> nodes);
 	void setNode(Vector3 pos, unsigned int ID);
+
+	void setUAVPositions(std::vector<std::vector<double> > uavPositions);
+
+	bool isDone() { return !ampl.isBusy(); }
+	void setModelParam(std::string name, double val);
 private:
 
 	ampl::AMPL ampl;
@@ -76,6 +86,7 @@ private:
 	} isOverHandler;
 
 	void exportNodePositionsToAMPL();
+	void modifyWp(std::vector<std::vector<double> > waypoints);
 
 };
 

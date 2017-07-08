@@ -18,9 +18,9 @@ public:
 	class Waypoint;
 
 	void setup(double horizon = 20, double stepLength = 0.25, double initialX = 0, double initialY = 0, double initialZ = 50);
-	void initializeController(ACADO::DVector initialState);
+	void initializeController(ACADO::DVector initialState = ACADO::DVector());
 	void setModel(LMModel * model);
-	void step(ACADO::DVector currentY, double currentTime);
+	ACADO::DVector step(double currnetTime);//ACADO::DVector currentY, double currentTime);
 	void step(ACADO::DVector currentY, ACADO::VariablesGrid referenceTrajectory, double currentTime);
 	void simulate(double duration);
 	void simulate(double duration, ACADO::DVector intitalState);
@@ -30,6 +30,16 @@ public:
 	void addWaypoint(double x, double y, double z, double time);
 	void deleteWaypoint(double time);
 	void resetWaypoints(); // deletes wp list
+	void keepOnlyWaypointsFromTo(double from, double to);
+
+	void setObservation(int stateNumber, double value);
+
+	double getCurrentState(int state);
+	double getCurrentControl(int control);
+
+	double getCurrentN() { return ySim.getLastVector()(10); }
+	double getCurrentE() { return ySim.getLastVector()(11); }
+	double getCurrentD() { return ySim.getLastVector()(12); }
 
 protected:
 
@@ -48,6 +58,9 @@ protected:
 	int referenceFunctionDimention;
 	ACADO::Controller * controller;
 
+	ACADO::DynamicSystem *dynSys;
+	ACADO::Process *process;
+
 	std::vector<Waypoint> waypoints;
 	ACADO::VariablesGrid referencePath;
 
@@ -64,6 +77,11 @@ protected:
 
 	//const double maxWaypoints = 20;
 
+	ACADO::DVector uCon;
+	
+	ACADO::VariablesGrid ySim;
+	ACADO::VariablesGrid pureSim;
+	ACADO::VariablesGrid allUs;
 
 };
 

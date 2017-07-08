@@ -5,17 +5,18 @@
 
 void testSimulate(){
 
-	LMMPC * mpc = new SimpleMPC();
+	LMMPC * mpc = new LMMPC();
 	mpc->setup(10.0, 0.25);
 	mpc->addWaypoint(0.0, 0.0, 0.0, 0.0);
-	mpc->addWaypoint(18.0*30, 0.0, 0.0, 30.0);
-	mpc->addWaypoint(18.0*60, 20.0, 0.0, 60.0);
+	mpc->addWaypoint(18.0*15, 0.0, 0.0, 15.0);
+	mpc->addWaypoint(18.0*15, 15 * 18.0, 0.0, 30.0);
+	mpc->addWaypoint(18.0*15, 45 * 18.0, 0.0, 60.0);
 	//mpc->addWaypoint(165.0, 30.0, 0.0, 9.0);
 	std::cout << "Waypoints inserted\n";
 
 	ACADO::DVector s0(17);
 	s0.setAll(0.0);
-	s0(5) = 0;
+	s0(5) = 0.0;
 	s0(9) = 0;
 	s0(12) = 0;
 	std::cout << "starting simulation..1\n";

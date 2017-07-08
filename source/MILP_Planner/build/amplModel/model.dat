@@ -1,25 +1,29 @@
-param np := 2; 	#total number of vehicles
-param N := 30; 	# optimization horizon
+param np := 1; 	#total number of vehicles
+param N := 100; 	# optimization horizon
 param Dvel := 8;
-param W := 2;
+param W := 4;
 
 param deltat := 2; 	# Sampletime
 
-param Vmax := 25;
-param Vmin := 0;
+param Vmax := 20;
+param Vmin := 15;
 
 
-param x_min := 0;
-param x_max := 500;
-param y_min := 0;
-param y_max := 500;
-param h_min := 30;
-param h_max := 500;
+param x_min := -1000;
+param x_max := 1000;
+param y_min := -1000;
+param y_max := 1000;
+param h_min := -50;
+param h_max := 100;
 
 param: initPos1 initPos2 :=
 1 10 30
 2 10 30
 3 50 50;
+
+param initPos: 1 2 3:=
+1 0 0 0;
+#2 30 30 0;
 
 param: goal :=
 1 100
@@ -44,8 +48,10 @@ param: rweight :=
 3 0.1;
 
 param waypoints: 1 2 3:=
-1 400 400 400
-2 200 100 150;
+1 100 0 0
+2 100 400 0
+3 400 50 0
+4 100 150 20;
 
 param M_finnish := 60;
 param gamma_finnish := 10;
@@ -63,3 +69,8 @@ param cy := 7;	#	-anti-collition safety distance
 param cz := 7;	#
 
 param MConDim := 100; # big M for casting conectivityDimentional to bool
+
+param: wind :=
+1 0
+2 0
+3 0;

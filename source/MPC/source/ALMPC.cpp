@@ -11,6 +11,7 @@ LMMPC::LMMPC() {
 LMMPC::LMMPC(LMModel * model) {
 
 	this->model = model;
+	referenceTrajectory = nullptr;
 
 }
 
@@ -42,9 +43,9 @@ void LMMPC::setup(double horizon, double stepLength, double initialX, double ini
 	setupOCP(horizon, stepLength);
 
 	alg = new ACADO::RealTimeAlgorithm(*ocp, stepLength);
-	alg->set( ACADO::INTEGRATOR_TYPE, ACADO::INT_RK45           );
-	alg->set( ACADO::INTEGRATOR_TOLERANCE, 1e-6           );
-    alg->set( ACADO::MAX_NUM_ITERATIONS, 2  );
+	//alg->set( ACADO::INTEGRATOR_TYPE, ACADO::INT_RK45           );
+	//alg->set( ACADO::INTEGRATOR_TOLERANCE, 1e-6           );
+    //alg->set( ACADO::MAX_NUM_ITERATIONS, 2  );
     //alg.set( ACADO::MAX_NUM_INTEGRATOR_STEPS, 10000  );
 
 	//referenceTrajectory = new ACADO::StaticReferenceTrajectory(waypoints);
@@ -52,15 +53,64 @@ void LMMPC::setup(double horizon, double stepLength, double initialX, double ini
 	controller = new ACADO::Controller(*alg);
 }
 
-void LMMPC::step(ACADO::DVector currentY, double currentTime){
+ACADO::DVector LMMPC::step(double currentTime){//ACADO::DVector currentY, double currentTime1){
+//
+	//controller->setReferenceTrajectory(*referenceTrajectory);
+	
+
+	//controller->step(currentTime, currentY);
+	//completeStep();	
+	ACADO::DVector s0(17);
+	s0.setAll(0.0);
+	s0(5) = 0.0;
+	s0(9) = 0;
+	s0(12) = 0;
+	
+
+	//double currentTime = 0;
+	double startTime = 0;
+	double samplingTime = 0.25;
+	double endTime = 10;
+	int nSteps = 0;
+
 	createReferenceTrajectory();
+	//controller->setReferenceTrajectory(*referenceTrajectory);
+	
+	//while ( currentTime <= endTime )
+	//{
+		printf( "\n*** WOHO Simulation Loop No. %d (starting at time %.3f) ***\n",nSteps,currentTime );
 
-	controller->setReferenceTrajectory(*referenceTrajectory);
-
-	controller->step(currentTime, currentY);
-	completeStep();	
+		
+		if (controller->step( currentTime,ySim.getLastVector(), referencePath ) != ACADO::SUCCESSFUL_RETURN)
+			exit( EXIT_FAILURE );
+		
+		controller->getU( uCon );
+		//if (controller->preparationStep( ) != ACADO::SUCCESSFUL_RETURN)
+		//	exit( EXIT_FAILURE );
+		//
+		if (process->step( currentTime,currentTime+samplingTime,uCon ) != ACADO::SUCCESSFUL_RETURN)
+			exit( EXIT_FAILURE );
+		process->getY( ySim );
+		
+		this->currentTime += samplingTime;
+		++nSteps;
+	//}
+		pureSim.addVector(ySim.getLastVector(), currentTime);
+		allUs.addVector(uCon, currentTime);
+	return uCon;
 
 }
+
+double LMMPC::getCurrentState(int state){
+
+	return ySim.getLastVector()(state);
+}
+
+double LMMPC::getCurrentControl(int control){
+
+	return allUs.getLastVector()(control);
+}
+
 
 void LMMPC::step(ACADO::DVector currentY, ACADO::VariablesGrid referenceTrajectory, double currentTime){
 
@@ -79,6 +129,13 @@ void LMMPC::step(ACADO::DVector currentY, ACADO::VariablesGrid referenceTrajecto
 }
 void LMMPC::simulate(double duration){
 
+	ACADO::DVector s0(17);
+	s0.setAll(0.0);
+	s0(5) = 0.0;
+	s0(9) = 0;
+	s0(12) = 0;
+	//std::cout << "starting simulation..1\n";
+	simulate(duration, s0);
 
 }
 
@@ -93,22 +150,22 @@ void LMMPC::simulate(double duration, ACADO::DVector initialState){
 	path.addVector(vector, 0.0);
 	referenceTrajectory = new ACADO::StaticReferenceTrajectory(path);
 	referencePath = path;*/
-	referencePath.print();
+	//referencePath.print();
 
 	controller->setReferenceTrajectory(*referenceTrajectory);
 
 	simulatorOutput = new ACADO::OutputFcn;
 
-	ACADO::DynamicSystem dynSys(*(model->getModel()), *simulatorOutput);
-	ACADO::Process process(dynSys, ACADO::INT_RK45);
-	simulator = new ACADO::SimulationEnvironment(0.0, duration, process, *controller);
+	dynSys = new ACADO::DynamicSystem(*(model->getModel()), *simulatorOutput);
+	process = new ACADO::Process(*dynSys, ACADO::INT_RK45);
+	simulator = new ACADO::SimulationEnvironment(0.0, duration, *process, *controller);
 
-	if (simulator->init( initialState ) != ACADO::SUCCESSFUL_RETURN)
-		exit( EXIT_FAILURE );
-	if (simulator->run( ) != ACADO::SUCCESSFUL_RETURN)
-		exit( EXIT_FAILURE );
+	if (simulator->init( initialState ) != ACADO::SUCCESSFUL_RETURN) int dummy = 1;
+		//exit( EXIT_FAILURE );
+	if (simulator->run( ) != ACADO::SUCCESSFUL_RETURN) int dummy = 1;
+		//exit( EXIT_FAILURE );
 
-	plotSimulation();
+	//plotSimulation();
 
 }
 
@@ -153,25 +210,39 @@ void LMMPC::resetWaypoints(){
 
 } // deletes wp list 
 
+void LMMPC::keepOnlyWaypointsFromTo(double from, double to){
+
+	std::vector<Waypoint> tmp;
+
+	for (auto  it = waypoints.begin(); it != waypoints.end(); it++){
+
+		if(it->time >= from && it->time <= to)
+			tmp.push_back((*it));
+
+	}
+
+	waypoints = tmp;
+}
+
 
 //-----------------------------------Private functions
 
 void LMMPC::setupReferenceFunction(){
-
-	std::cout <<"\n\nfeil\n\n";
 
 	referenceFunction = new ACADO::Function();
 
 	(*referenceFunction) << model->N;
 	(*referenceFunction) << model->E;
 	(*referenceFunction) << model->D;
-	(*referenceFunction) << model->psi;
+	//(*referenceFunction) << model->psi;
 	(*referenceFunction) << model->delta_t;
 	(*referenceFunction) << model->delta_aDot;
 	(*referenceFunction) << model->delta_eDot;
+	(*referenceFunction) << model->delta_tDot;
+	(*referenceFunction) << model->vHat;
 
 
-	referenceFunctionDimention = 7;
+	referenceFunctionDimention = 8;
 
 	coefficientMatrix = new ACADO::DMatrix(referenceFunctionDimention, referenceFunctionDimention);
 	coefficientMatrix->setAll(0);
@@ -179,10 +250,11 @@ void LMMPC::setupReferenceFunction(){
 	for (int i = 0; i < referenceFunctionDimention; i++)
 		(*coefficientMatrix)(i,i) = 1.0f;
 
-	(*coefficientMatrix)(3,3) = 10.0f;
-	(*coefficientMatrix)(4,4) = 0.10f;
-	(*coefficientMatrix)(5,5) = 0.10f;
-	(*coefficientMatrix)(6,6) = 0.10f;
+	(*coefficientMatrix)(2,2) = 10.0f;
+	(*coefficientMatrix)(3,3) = 1.0f;
+	(*coefficientMatrix)(4,4) = 01.10f;
+	(*coefficientMatrix)(5,5) = 01.10f;
+	(*coefficientMatrix)(6,6) = 01.10f;
 
 }
 
@@ -212,7 +284,7 @@ void LMMPC::setupOCP(double horizon, double stepLength){
 }
 
 void LMMPC::setupModel(){
-
+	std::cout << "lin model\n";
 	model = new LMModelLinear();
 	model->createModel();
 	model->printAllParameters();
@@ -231,24 +303,24 @@ void LMMPC::plotSimulation(){
 		exit( EXIT_FAILURE );
 
 	ACADO::GnuplotWindow window;
-		window.addSubplot( diffStates(0),   "n" );
-		window.addSubplot( diffStates(1),   "e" );
-		window.addSubplot( diffStates(2),   "d" );
-		window.addSubplot( diffStates(3),   "u" );
-		window.addSubplot( diffStates(4),   "v" );
-		window.addSubplot( diffStates(5),   "w" );
-		window.addSubplot( diffStates(13),   "delta_e" );
-		window.addSubplot( diffStates(14),   "delta_a" );
-		window.addSubplot( diffStates(15),   "delta_r" );
+		window.addSubplot( diffStates(10),   "n" );
+		window.addSubplot( diffStates(11),   "e" );
+		window.addSubplot( diffStates(12),   "d" );
+		window.addSubplot( diffStates(5),   "u" );
+		window.addSubplot( diffStates(0),   "v" );
+		window.addSubplot( diffStates(6),   "w" );
+		window.addSubplot( diffStates(15),   "delta_e" );
+		window.addSubplot( diffStates(13),   "delta_a" );
+		window.addSubplot( diffStates(14),   "delta_r" );
 		window.addSubplot( diffStates(16),   "delta_t" );
 		window.plot();
 	ACADO::GnuplotWindow window2;
-		window2.addSubplot( diffStates(9),   "p" );
-		window2.addSubplot( diffStates(11),   "q" );
-		window2.addSubplot( diffStates(10),   "r" );
-		window2.addSubplot( diffStates(7),   "phi" );
-		window2.addSubplot( diffStates(6),   "theta" );
-		window2.addSubplot( diffStates(8),   "psi" );
+		window2.addSubplot( diffStates(1),   "p" );
+		window2.addSubplot( diffStates(7),   "q" );
+		window2.addSubplot( diffStates(2),   "r" );
+		window2.addSubplot( diffStates(3),   "phi" );
+		window2.addSubplot( diffStates(8),   "theta" );
+		window2.addSubplot( diffStates(4),   "psi" );
 		window2.plot();
 	ACADO::GnuplotWindow window1;
 		window1.addSubplot( feedbackControl(0),   "delta_e" );
@@ -275,10 +347,15 @@ void LMMPC::completeStep(){
 void LMMPC::createReferenceTrajectory(){
 
 	ACADO::VariablesGrid path;
-	std::cout << waypoints.size() ;
+	std::cout << waypoints.size() <<"\n";
 
 	int nWP = waypoints.size();
-	std::cout << "creating trajectory\n";
+
+	for(int i = 0; i < nWP; i++)
+			std::cout << (waypoints[i].x)<< " " << (waypoints[i].y) << " " << (waypoints[i].z)<< " t: " << waypoints[i].time << "\n";
+
+
+	//std::cout << "creating trajectory\n";
 	double ts = 0.0;
 	double te = 0.0;
 	double td = 0.0;
@@ -289,25 +366,71 @@ void LMMPC::createReferenceTrajectory(){
 		ts = waypoints[i].time;
 		te = waypoints[i+1].time;
 		td = te - ts;
-		std::cout << td;
+		//std::cout << "td: " << td << "\n";
 		angle = atan2(waypoints[i+1].y - waypoints[i].y, waypoints[i+1].x - waypoints[i].x);
 		for (double t = 0.0; t < td; t += stepLength/2){
-			std::cout << stepLength;
+			
 			vector.setAll(0);
 			vector(0) = (waypoints[i].x * ((td - t) / td) ) + (waypoints[i+1].x * (t / td));
 			vector(1) = (waypoints[i].y * ((td - t) / td) ) + (waypoints[i+1].y * (t / td));
 			vector(2) = (waypoints[i].z * ((td - t) / td) ) + (waypoints[i+1].z * (t / td));
-			vector(3) = angle;
+			//vector(3) = angle;
 			//TODO: fix angle to match revolution (n*2pi) of yaw
 		
 			path.addVector(vector, t + ts);
+			std::cout << (waypoints[i].x * ((td - t) / td) ) + (waypoints[i+1].x * (t / td))<< " " << (waypoints[i].y * ((td - t) / td) ) + (waypoints[i+1].y * (t / td)) << " " << (waypoints[i].z * ((td - t) / td) ) + (waypoints[i+1].z * (t / td))<< " " << t + ts <<"\n";
 		}
 	}
 	this->referencePath = path;
+	//path.print();
 
 	if (referenceTrajectory != nullptr)
 		delete referenceTrajectory;
 
 	referenceTrajectory = new ACADO::StaticReferenceTrajectory(path);
+
+}
+
+void LMMPC::initializeController(ACADO::DVector initialState){
+	std::cout << "\nHALP\n" << std::flush;
+
+	simulatorOutput = new ACADO::OutputFcn;
+	std::cout << "\nHALP\n" << std::flush;
+	//controller->step(currentTime, currentY);
+	//completeStep();	
+	ACADO::DVector s0(17);
+	s0.setAll(0.0);
+	s0(5) = 0.0;
+	s0(9) = 0;
+	s0(12) = 0;
+	dynSys = new ACADO::DynamicSystem(*(model->getModel()), *simulatorOutput);
+		std::cout << "\nDBG\n" << std::flush;
+	process = new ACADO::Process(*dynSys, ACADO::INT_RK45);
+	std::cout << "\nHALP\n" << std::flush;
+
+	double currentTime = 0;
+	double startTime = 0;
+	double samplingTime = 0.25;
+	double endTime = 10;
+	int nSteps = 0;
+
+	
+	if (controller->init( 0,s0 ) != ACADO::SUCCESSFUL_RETURN)
+		exit( EXIT_FAILURE );
+	controller->getU( uCon );
+		printf( "\n*** Simulation Loop No. %d (starting at time %.3f) ***\n",nSteps,currentTime );
+	
+	if (process->init( startTime,s0,uCon ) != ACADO::SUCCESSFUL_RETURN)
+		exit( EXIT_FAILURE );
+	process->getY( ySim );
+		printf( "\n*** Simulation Loop No. %d (starting at time %.3f) ***\n",nSteps,currentTime );
+
+
+		pureSim = ySim;
+}
+
+void LMMPC::setObservation(int varNumber, double value){
+
+	ySim(ySim.getDim()-1, varNumber) = value;
 
 }

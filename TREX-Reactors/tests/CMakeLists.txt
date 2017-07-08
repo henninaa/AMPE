@@ -33,6 +33,21 @@
 # POSSIBILITY OF SUCH DAMAGE.                                         #
 #######################################################################
 
+SET(AMPL_DIRECTORY /home/henning/Documents/prosjektet/ampl/amplapi)
+
+INCLUDE_DIRECTORIES( ${AMPL_DIRECTORY}/include )
+
+#
+# Prerequisites
+#
+FIND_PACKAGE( ACADO REQUIRED )
+SET(AMPL_DIRECTORY /home/henning/Documents/prosjektet/ampl/amplapi)
+
+#
+# Include directories
+#
+INCLUDE_DIRECTORIES( . ${ACADO_INCLUDE_DIRS} )
+
 trex_plugin(CrudePath 
   CRCrudePath.cpp
   CrudePathModule.cpp
@@ -42,6 +57,8 @@ trex_plugin(CrudePath
   shared.h
   )
 target_link_libraries(CrudePath_pg TREXtransaction)
+target_link_libraries(CrudePath_pg  ${AMPL_DIRECTORY}/lib/libampl.so)
+target_link_libraries(CrudePath_pg /usr/local/lib/libpathPlanner_shared.so)
 
 trex_plugin(RefinedPath 
   IRRefinedPath.cpp
@@ -49,6 +66,8 @@ trex_plugin(RefinedPath
   IRRefinedPath.h
   )
 target_link_libraries(RefinedPath_pg TREXtransaction)
+TARGET_LINK_LIBRARIES( RefinedPath_pg ${ACADO_SHARED_LIBRARIES} )
+target_link_libraries(RefinedPath_pg /usr/local/lib/libMPC_shared.so)
 
 trex_plugin(Navigator 
   IRNavigator.cpp

@@ -1,7 +1,12 @@
 #include "LMModelLinear.h"
 
+LMModelLinear::LMModelLinear() : LMModel(X8PARAMETERS) {
+	createModel();
+}
 
 bool LMModelLinear::createModel(){
+
+	std::cout << "\nModel Created\n" << std::flush;
 
 	setEquilibriumStates();
 
@@ -192,10 +197,10 @@ bool LMModelLinear::createModel(){
 	r = rHat + rStar;
 	q = qHat + qStar;
 	h = hHat + hStar;
-	delta_t = delta_tHat + delta_tStar;
 	delta_a = delta_aHat + delta_aStar;
-	delta_e = delta_eHat + delta_eStar;
 	delta_r = delta_rHat + delta_rStar;
+	delta_e = delta_eHat + delta_eStar;
+	delta_t = delta_tHat + delta_tStar;
 
 
 	//------------------------------Latteral
@@ -229,8 +234,8 @@ bool LMModelLinear::createModel(){
 
 	//NED
 
-	model << dot(N) == u * (cos(theta) * cos(psi) ) + v * ( sin(phi) * sin(theta) * cos(psi) - cos(phi) * sin(psi)) + w * (cos(phi) * sin(theta) * cos(psi) + sin(phi) * sin(psi));
-	model << dot(E) == u * (cos(theta) * sin(psi)) + v * (sin(phi) * sin(theta) * sin(psi) + cos(phi) * cos(psi)) + w * ( cos(phi) * sin(theta) * sin(psi) - sin(phi) * cos(psi));
+	model << dot(N) == windN + u * (cos(theta) * cos(psi) ) + v * ( sin(phi) * sin(theta) * cos(psi) - cos(phi) * sin(psi)) + w * (cos(phi) * sin(theta) * cos(psi) + sin(phi) * sin(psi));
+	model << dot(E) == windY + u * (cos(theta) * sin(psi)) + v * (sin(phi) * sin(theta) * sin(psi) + cos(phi) * cos(psi)) + w * ( cos(phi) * sin(theta) * sin(psi) - sin(phi) * cos(psi));
 	model << dot(D) == u * (sin(theta)) - v * (sin(phi) * cos(theta)) - w * (cos(phi) * cos(theta));
 
 
@@ -303,3 +308,4 @@ void LMModelLinear::setConstaintsAsParameters(){
 
 
 }
+

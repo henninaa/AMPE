@@ -8,6 +8,8 @@
 # include <trex/domain/FloatDomain.hh>
 # include <trex/domain/IntegerDomain.hh>
 
+#include "../../source/MPC/source/ALMPC.h"
+#include "../../source/MPC/source/LMModelLinear.h"
 
 /*
 *	CR: Common Reactor
@@ -25,15 +27,22 @@ public:
 
 	IRRefinedPath(TREX::transaction::TeleoReactor::xml_arg_type arg);
 	~IRRefinedPath();
+	void handleInit();
 
 	bool synchronize();
 	void notify(TREX::transaction::Observation const & obs);
+
+	bool hasWork();
+	void resume();
 
 private:
 
 	void handleRequest(TREX::transaction::goal_id const & goal);
 
+	void dispatchGoals();
+	void dispatchObservations();
 
+	static LMModelLinear * linearModel;
 	static TREX::utils::Symbol const AtPred;
 	static TREX::utils::Symbol const GoingPred;
 	TREX::utils::Symbol const UAVTimeline;
@@ -60,8 +69,18 @@ private:
 	static TREX::utils::Symbol const q;
 	
 	TREX::transaction::goal_id pendingGoal;
-	double currentX;
+	double currentTick;
 	double jumpAt;
+
+	bool planReady;
+	bool needsWorkThisTick;
+
+	int lastTickReceivedPlan;
+	int nwpTick;
+
+	LMMPC * mpc;
+	double stepLength;
+
 };
 
 

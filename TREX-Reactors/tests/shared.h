@@ -6,10 +6,11 @@
 	class WP{
 	public:
 
-		WP(double n, double e, double d) : n(n), e(e), d(d) {}
+		WP(double n, double e, double d, double t = 0.0) : n(n), e(e), d(d), t(t) {}
 		~WP(){}
 
 		double n,e,d;
+		double t;
 	};
 
 	class Entity{
