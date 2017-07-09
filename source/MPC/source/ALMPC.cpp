@@ -9,7 +9,7 @@ LMMPC::LMMPC() {
 
 	hasPlotWindow = false;
 	havePloted = false;
-	nSteps = 0;
+	//nSteps = 0;
 
 }
 
@@ -42,10 +42,12 @@ void LMMPC::setup(double horizon, double stepLength, double initialX, double ini
 	
 	if (model == nullptr)
 		setupModel();
-	std::cout << "\nERROR\n";
+	std::cout << "\nERROR3\n";
 	setupReferenceFunction();
+	std::cout << "\nERROR2\n";
 	
 	setupOCP(horizon, stepLength);
+	std::cout << "\nERROR1\n";
 
 	alg = new ACADO::RealTimeAlgorithm(*ocp, stepLength);
 	//alg->set( ACADO::INTEGRATOR_TYPE, ACADO::INT_RK45           );
@@ -54,6 +56,7 @@ void LMMPC::setup(double horizon, double stepLength, double initialX, double ini
     //alg.set( ACADO::MAX_NUM_INTEGRATOR_STEPS, 10000  );
 
 	//referenceTrajectory = new ACADO::StaticReferenceTrajectory(waypoints);
+	std::cout << "\nERROR\n";
 	
 	controller = new ACADO::Controller(*alg);
 }
@@ -76,7 +79,7 @@ ACADO::DVector LMMPC::step(double currentTime){//ACADO::DVector currentY, double
 	//double startTime = 0;
 	//double samplingTime = 0.25;
 	//double endTime = 10;
-	//int nSteps = 0;
+	int nSteps = 0;
 
 	createReferenceTrajectory(currentTime);
 	//controller->setReferenceTrajectory(*referenceTrajectory);
@@ -291,14 +294,20 @@ void LMMPC::setupReferenceFunction(){
 
 
 void LMMPC::setupOCP(double horizon, double stepLength){
+	std::cout << "\nERRORb\n";
 
 	ocp = new ACADO::OCP(0.0, horizon, horizon / stepLength);
+	std::cout << "\nERRORb\n";
 
 	ACADO::DVector tmpVec(referenceFunctionDimention);
+	std::cout << "\nERRORb\n";
 	tmpVec.setAll(0.0);
+	std::cout << "\nERRORb\n";
 	ocp->minimizeLSQ( *coefficientMatrix, *referenceFunction, tmpVec);
+	std::cout << "\nERRORb\n";
 
 	ocp->subjectTo(*(model->getModel()));
+	std::cout << "\nERRORb\n";
 	//ocp->subjectTo(-0.3 <= model->theta <= 0.3);
 	//ocp->subjectTo(-0.3 <= model->phi <= 0.3);
 	//ocp->subjectTo(-0.3 <= model->psi <= 0.3);
