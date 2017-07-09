@@ -65,7 +65,7 @@ private:
 	bool planReady;
 	bool hasWorkThisTick;
 	bool deliberationNeedsStart;
-	bool const moduleSwitch = true;
+	bool const moduleSwitch = false;;
 	int currentTick;
 	double stepLength;
 	double sampleTime;

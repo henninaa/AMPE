@@ -69,7 +69,7 @@ private:
 	static TREX::utils::Symbol const q;
 	
 	TREX::transaction::goal_id pendingGoal;
-	double currentTick;
+	int currentTick;
 	double jumpAt;
 
 	bool planReady;

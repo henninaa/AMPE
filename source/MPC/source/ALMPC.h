@@ -41,11 +41,14 @@ public:
 	double getCurrentE() { return ySim.getLastVector()(11); }
 	double getCurrentD() { return ySim.getLastVector()(12); }
 
+	void plot();
+
 protected:
 
 	double horizon;
 	double stepLength;
 	double currentTime;
+	int nSteps;
 	ACADO::DVector u; 
 
 	LMModel * model;
@@ -71,7 +74,7 @@ protected:
 	virtual void setupOCP(double horizon, double sttepLenght);
 	virtual void setupModel();
 	virtual void plotSimulation();
-	virtual void createReferenceTrajectory();
+	virtual void createReferenceTrajectory(double t0 = 0.0);
 	void getDubinsPath(std::vector<ACADO::DVector> wps);
 	void completeStep();
 
@@ -82,6 +85,16 @@ protected:
 	ACADO::VariablesGrid ySim;
 	ACADO::VariablesGrid pureSim;
 	ACADO::VariablesGrid allUs;
+
+	//----Plot variables and functions
+
+	ACADO::GnuplotWindow windowControls;
+	ACADO::GnuplotWindow windowLinStates;
+	ACADO::GnuplotWindow windowAngStates;
+	bool hasPlotWindow;
+	bool havePloted;
+	void createPlot();
+	void updatePlot();
 
 };
 

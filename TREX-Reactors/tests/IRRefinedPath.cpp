@@ -78,11 +78,15 @@ namespace TREX {
 		mpc->setup(10.0, 0.25);
 		mpc->initializeController();
 
+		//mpc->addWaypoint(0.0, 0.0, 0.0, 0.0);
+		//mpc->addWaypoint(18.0*15, 0.0, 0.0, 15.0);
+		//mpc->addWaypoint(18.0*15, 15 * 18.0, 0.0, 30.0);
+		//mpc->addWaypoint(18.0*15, 45 * 18.0, 0.0, 60.0);
+		//mpc->addWaypoint(165.0, 30.0, 0.0, 9.0);
 		mpc->addWaypoint(0.0, 0.0, 0.0, 0.0);
 		mpc->addWaypoint(18.0*15, 0.0, 0.0, 15.0);
 		mpc->addWaypoint(18.0*15, 15 * 18.0, 0.0, 30.0);
-		//mpc->addWaypoint(18.0*15, 45 * 18.0, 0.0, 60.0);
-		mpc->addWaypoint(165.0, 30.0, 0.0, 9.0);
+		mpc->addWaypoint(18.0*15, 45 * 18.0, 0.0, 60.0);
 		std::cout << "Waypoints inserted\n";
 
 	}
@@ -123,6 +127,10 @@ namespace TREX {
 		planReady = true;
 		
 		mpc->step(stepLength * currentTick);
+		std::cout << "\n step: " << stepLength * currentTick << "\n";
+		//mpc->simulate(30.0);
+		if(currentTick % 50 == 0)
+			mpc->plot();
 
 		needsWorkThisTick = false;
 
