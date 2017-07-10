@@ -18,12 +18,7 @@ solve;
 # Display Results
 
 display pos;
-display v;
-display V;
-display theta_finnish;
-display bwp;
-display eta_finnish;
-display Jacc;
-display J_finnish;
-display x;
+
+display{i in 1..N} bCon[1,2,i];
+
 expand sysmodel;

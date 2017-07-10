@@ -46,7 +46,6 @@ param waypoints{w in 1..W, j in Dim};  #--- actual waypoints.
 param M_finnish;
 param gamma_finnish;  		# positive weight for J_finnish
 
-param M_con;
 
 param dx;	#
 param dy;	#	-anti-collition safety distance
@@ -59,15 +58,28 @@ param cy;	#	-connectivity distance
 param cz;	#
 
 param MConDim; # big M for casting conectivityDimentional to bool
+param Rcon;
+param epsilon;
+param MCon;
 
 param wind{j in Dim};
+
+#Dataflow
+
+param cSensor;
+param hBar;
+param Cmax;
+param CmaxOut;
+param CmaxIn;
+
+
 
 #-------- Vars
 
 var v {p in 1..np, i in 0..N, row in Dim};		#velocity in vehicle, time, row
 var V {p in 1..np, i in 0..N};					#absolute velocity in vehicle, time, row
 
-var pos {p in 1..np, i in 0..N, row in Dim};
+var pos {p in 1..np+1, i in 0..N, row in Dim};
 
 var Jacc; 					#The penalizing var for acceleration
 var wacc{p in 1..np, i in 0..N, j in Dim};					#Acceleration vector
@@ -85,6 +97,12 @@ var lambda_sensor{p in 1..np, i in 0..N, t in 1..W};
 
 var UAV_distances{p in 1..np, q in 1..np, i in 0..N};
 
+
+#Dataflow
+
+var m{p in 1..np+1, i in 1..N, s in 1..np, j in 1..N };
+var c{p in 1..np+1, q in 1..np+1, i in 1..N, s in 1..np, j in 1..N };
+
  
 #--- binary vars
 
@@ -94,10 +112,14 @@ var bwp{p in 1..np, i in 0..N, w in 1..W} binary;
 
 var bsensor{p in 1..np, i in 0..N} binary;
 
-var bCol{p in 1..np-1, q in 2..np, i in 1..N, row in 1..3, col in 1..2}; #big M anti-collision 
+var bCol{p in 1..np-1, q in 2..np, i in 0..N, row in 1..3, col in 1..2}; #big M anti-collision 
 
-var bconnectivityDimentional{p in 1..np, q in 1..np, i in 0..N, d in Dim} binary;
-var bconnectivity{p in 1..np, q in 1..np, i in 0..N} binary;
+var lambdaCon{p in 1..np + 1, q in 1..np + 1, i in 1..N, d in 1..Dvel, j in 1..Dvel/2, r in Dim} binary;
+var bCon{p in 1..np+1, q in 1..np+1, i in 0..N} binary;
+
+#-------- test vars
+
+var numberOf_lambdaCon{p in 1..np+1, q in 1..np+1, i in 1..N};
 
 #-------- model
 
@@ -110,6 +132,11 @@ minimize objective: J_finnish + Jacc;
 
 subject to initPos1constraint{p in 1..np, r in Dim}:
 pos[p,0,r] = initPos[p,r];
+
+#Base station
+
+subject to baseStation{i in 1..N, r in Dim}:
+pos[np+1,i,r] = waypoints[W, r];
 
 #subject to initPos2constraint{r in Dim}:
 #pos[2,0,r] = initPos2[r];
@@ -260,5 +287,73 @@ sum{t in 1..W}(lambda_sensor[p,i,t]) = bsensor[p,i];
 
 #connectivity constraints
 
-#subject to connectivityDistance{p in 1..np, q in 1..np, i in 0..N}:
-#UAV_distance[p,q,i] = 
+subject to connectivityLambda1X{p in 1..np + 1, q in 1..np+1, i in 1..N, d in 1..Dvel, l in 1..Dvel/2}:
+chix[d, l] * (pos[p,i, 1] - pos[q,i,1] ) - Rcon <= MConDim * (1 - lambdaCon[p, q, i, d, l, 1]);
+
+subject to connectivityLambda2X{p in 1..np + 1, q in 1..np+1, i in 1..N, d in 1..Dvel, l in 1..Dvel/2}:
+chix[d, l] * (pos[p,i, 1] - pos[q,i,1] ) - Rcon >= epsilon + (-MConDim  - epsilon) * lambdaCon[p, q, i, d, l, 1];
+
+
+subject to connectivityLambda1Y{p in 1..np + 1, q in 1..np+1, i in 1..N, d in 1..Dvel, l in 1..Dvel/2}:
+chiy[d, l] * (pos[p,i, 2] - pos[q,i,2] ) - Rcon <= MConDim * (1 - lambdaCon[p, q, i, d, l, 2]);
+
+subject to connectivityLambda2Y{p in 1..np + 1, q in 1..np+1, i in 1..N, d in 1..Dvel, l in 1..Dvel/2}:
+chiy[d, l] * (pos[p,i, 2] - pos[q,i,2] ) - Rcon >= epsilon + (-MConDim  - epsilon) * lambdaCon[p, q, i, d, l, 2];
+
+
+subject to connectivityLambda1Z{p in 1..np + 1, q in 1..np+1, i in 1..N, d in 1..Dvel, l in 1..Dvel/2}:
+chiz[d, l] * (pos[p,i, 3] - pos[q,i,3] ) - Rcon <= MConDim * (1 - lambdaCon[p, q, i, d, l, 3]);
+
+subject to connectivityLambda2Z{p in 1..np + 1, q in 1..np+1, i in 1..N, d in 1..Dvel, l in 1..Dvel/2}:
+chiz[d, l] * (pos[p,i, 3] - pos[q,i,3] ) - Rcon >= epsilon + (-MConDim  - epsilon) * lambdaCon[p, q, i, d, l, 3];
+
+subject to testLambda{p in 1..np + 1, q in 1..np+1, i in 1..N}:
+numberOf_lambdaCon[p,q,i] = sum{d in 1..Dvel, l in 1..Dvel/2, r in Dim}(lambdaCon[p, q, i, d, l, r]);
+
+subject to connectivity1{p in 1..np+1, q in 1..np+1, i in 1..N}:
+(3*Dvel*(Dvel/2)) - sum{d in 1..Dvel, l in 1..Dvel/2, r in Dim}(lambdaCon[p, q, i, d, l, r]) <= (3*Dvel*(Dvel/2)) * (1 - bCon[p,q,i]);
+
+subject to connectivity2{p in 1..np+1, q in 1..np+1, i in 1..N}:
+(3*Dvel*(Dvel/2)) - sum{d in 1..Dvel, l in 1..Dvel/2, r in Dim}(lambdaCon[p, q, i, d, l, r]) >=  epsilon + (- (3*Dvel*(Dvel/2)) - epsilon ) * bCon[p,q,i];
+
+
+
+#Dataflow constraints
+
+subject to dfAboveZero1{p in 1..np+1, i in 1..N, s in 1..np, j in 1..N }:
+m[p,i,s,j] >= 0;
+
+subject to dfAboveZero2{p in 1..np+1, q in 1..np+1, i in 1..N, s in 1..np, j in 1..N }:
+c[p, q, i,s,j] >= 0;
+
+
+subject to dfAboveZero3{p in 1..np+1, j in 1..N, i in 1..j, s in 1..np }:
+m[p,i,s,j] = 0;
+
+subject to dfAboveZero4{p in 1..np+1, q in 1..np+1, j in 1..N, i in 1..j, s in 1..np }:
+c[p, q, i,s,j] = 0;
+
+subject to transmission1{s in 1..np, j in 1..N}:
+m[s,j,s,j] = deltat * (cSensor  * bsensor[s,j] - sum{q in 1..np+1: q!=s}(c[s,q,j,s,j]) );
+
+subject to transmission2{p in 1..np, j in 1..N, i in j+1..N, s in 1..np}:
+m[p,i,s,j] = m[p,i-1,s,j] + deltat * ( sum{q in 1..np+1: q!=p}( c[q,p,i,s,j] - c[p,q,i,s,j] ) );
+
+subject to bufferSize{p in 1..np, i in 1..N}:
+sum{s in 1..np, j in 1..i} (m[p,i,s,j]) <= hBar;
+
+subject to timeNotGathered{p in 1..np, s in 1..np, j in 1..N, i in j..N}:
+m[p,i,s,j] <= bsensor[p,j] * deltat * cSensor;
+
+subject to passiveBase{s in 1..np, q in 1..np, j in 1..N, i in j..N}:
+c[np+1, q,i,s,j] <= 0;
+
+
+subject to connectiviteTransfer{p in 1..np, s in 1..np, q in 1..np+1, j in 1..N, i in j..N}:
+c[p,q,i,s,j] <= Cmax * bCon[p,q,i];
+
+subject to collectiveOut{p in 1..np, i in 1..N}:
+sum{ q in 1..np+1, s in 1..np, j in 1..i :p!=q }(c[p,q,i,s,j]) <= CmaxOut;
+
+subject to collectiveIn{p in 1..np, i in 1..N}:
+sum{ q in 1..np+1, s in 1..np, j in 1..i :p!=q }(c[q,p,i,s,j]) <= CmaxIn;
