@@ -23,21 +23,59 @@ std::string make_daytime_string()
   return ctime(&now);
 }
 
+int sendN()
+{
+  try
+  {
+    
+
+    boost::asio::io_service io_service;
+
+    udp::resolver resolver(io_service);
+    udp::resolver::query query(udp::v4(), "localhost", "60001");
+    udp::endpoint receiver_endpoint = *resolver.resolve(query);
+
+    udp::socket socket(io_service);
+    socket.open(udp::v4());
+
+    boost::array<double, 1> send_buf;
+    send_buf[0] = 10.1;
+    socket.send_to(boost::asio::buffer(send_buf), receiver_endpoint);
+
+    boost::array<char, 128> recv_buf;
+    udp::endpoint sender_endpoint;
+   
+  }
+  catch (std::exception& e)
+  {
+    std::cerr << e.what() << std::endl;
+  }
+
+  return 0;
+}
+
 int main()
 {
   try
   {
     boost::asio::io_service io_service;
 
-    udp::socket socket(io_service, udp::endpoint(udp::v4(), 2000));
+    udp::socket socket(io_service, udp::endpoint(udp::v4(), 60000));
 
     for (;;)
     {
-      boost::array<char, 1> recv_buf;
+      boost::array<double, 1024> recv_buf;
       udp::endpoint remote_endpoint;
       boost::system::error_code error;
-      socket.receive_from(boost::asio::buffer(recv_buf),
+      size_t len = socket.receive_from(boost::asio::buffer(recv_buf),
           remote_endpoint, 0, error);
+
+     // std::cout.write(recv_buf.data(), len);
+      std::cout << "Received: " <<  len << "\n" << recv_buf[0] << "\n" << std::flush;
+      std::cout <<  recv_buf[1] << "\n" << std::flush;
+      std::cout <<  recv_buf[2] << "\n" << std::flush;
+
+      sendN();
 
       if (error && error != boost::asio::error::message_size)
         throw boost::system::system_error(error);
@@ -46,7 +84,7 @@ int main()
       boost::array<double, 1> send_buf = {{ 0.0 }};
 
       boost::system::error_code ignored_error;
-      socket.send_to(boost::asio::buffer(send_buf),
+      socket.send_to(boost::asio::buffer("dette er en test"),
           remote_endpoint, 0, ignored_error);
     }
   }

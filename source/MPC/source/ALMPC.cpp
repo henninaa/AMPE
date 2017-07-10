@@ -262,7 +262,7 @@ void LMMPC::setupReferenceFunction(){
 
 	std::cout << "\nERROR\n" << std::flush;
 
-	ACADO::Function * referenceFunction = new ACADO::Function();
+	referenceFunction = new ACADO::Function();
 	std::cout << "\nERROR\n" << std::flush;
 
 	(*referenceFunction) << model->N;

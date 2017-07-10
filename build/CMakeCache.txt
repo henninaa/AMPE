@@ -168,9 +168,6 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
-//Dependencies for target
-MPC_lib_LIB_DEPENDS:STATIC=
-
 //Dependencies for the target
 MPC_shared_LIB_DEPENDS:STATIC=general;/home/henning/Documents/prosjektet/source_acado/ACADOtoolkit/build/lib/libacado_toolkit_s.so;
 
@@ -185,9 +182,6 @@ Project_BINARY_DIR:STATIC=/home/henning/Documents/Masters_Thesis/AMPE/build
 
 //Value Computed by CMake
 Project_SOURCE_DIR:STATIC=/home/henning/Documents/Masters_Thesis/AMPE
-
-//Dependencies for target
-pathPlanner_lib_LIB_DEPENDS:STATIC=
 
 //Dependencies for the target
 pathPlanner_shared_LIB_DEPENDS:STATIC=general;/home/henning/Documents/prosjektet/ampl/amplapi/lib/libampl.so;

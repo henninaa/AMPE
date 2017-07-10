@@ -264,7 +264,7 @@ void LMModelLinear::setEquilibriumStates(){
 	betaStar = 0.0;
 	delta_aStar = 0.0000;
 	delta_rStar = 0.0;
-	delta_eStar = 0.0079;
+	delta_eStar = 0.0039;//0.0079;
 	delta_tStar = 0.1240;
 	V_aStar = 19.0;
 	hStar = 0.0;

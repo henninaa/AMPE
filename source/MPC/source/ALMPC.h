@@ -48,7 +48,7 @@ protected:
 	double horizon;
 	double stepLength;
 	double currentTime;
-	//int nSteps;
+	int nSteps;
 	ACADO::DVector u; 
 
 	LMModel * model;
