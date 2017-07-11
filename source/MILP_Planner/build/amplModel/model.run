@@ -11,6 +11,7 @@ data chiz.dat;
 
 # Set Up Configurations (optional)
 option solver 'cplex';
+option cplex_options 'mipgap=1e-2';
 
 # Solve Problem
 solve;
@@ -20,5 +21,6 @@ solve;
 display pos;
 
 display{i in 1..N} bCon[1,2,i];
+display {p in 1..np, i in 1..N} sum{q in 1..np, s in 1..np, j in 1..N}(c[p,q,i,s,j]);
 
 expand sysmodel;

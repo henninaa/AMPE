@@ -244,7 +244,7 @@ subject to waypointHitN{p in  1..np, i in 1..N, w in 1..W, j in Dim}:
  subject to zPos{p in 1..np, i in 0..N}:
  z[p,i] = pos[p,i,3];
 
-
+/*
 #anti collision constraints
 
 subject to antiCollisionX1{p in 1..np-1, q in p+1..np, i in 1..N} :
@@ -265,6 +265,7 @@ pos[p,i,3] - pos[q,i,3] <= MCol * bCol[p,q,i,3,2] - dz;
 subject to antiCollisionSum{p in 1..np-1, q in p+1..np, i in 1..N} :
 sum{row in 1..3, col in 1..2}(bCol[p,q,i,row,col]) <= 5;
 
+*/
 
  #Data gathering constraints
 
@@ -283,7 +284,7 @@ sum{t in 1..W}(lambda_sensor[p,i,t]) = bsensor[p,i];
 #Dataflow constraints
 
 
-
+/*
 
 #connectivity constraints
 
@@ -357,3 +358,5 @@ sum{ q in 1..np+1, s in 1..np, j in 1..i :p!=q }(c[p,q,i,s,j]) <= CmaxOut;
 
 subject to collectiveIn{p in 1..np, i in 1..N}:
 sum{ q in 1..np+1, s in 1..np, j in 1..i :p!=q }(c[q,p,i,s,j]) <= CmaxIn;
+
+*/

@@ -32,6 +32,8 @@ public:
 	bool hasWork();
 	void resume();
 
+	void handleInit();
+
 private:
 
 	class UAVTimelinePair{
@@ -65,7 +67,7 @@ private:
 	bool planReady;
 	bool hasWorkThisTick;
 	bool deliberationNeedsStart;
-	bool const moduleSwitch = false;;
+	bool const moduleSwitch = true;;
 	int currentTick;
 	double stepLength;
 	double sampleTime;

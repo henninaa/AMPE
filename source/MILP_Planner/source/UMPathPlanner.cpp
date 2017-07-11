@@ -22,9 +22,14 @@ UMPathPlanner::~UMPathPlanner(){
 void UMPathPlanner::run(std::vector<std::vector<double> > waypointsInn)
 {
 	modifyWp(waypointsInn);
+
+	for(int i = 0; i < waypointsInn.size(); i++)
+		std::cout << waypointsInn[i][0] << " " << waypointsInn[i][1] << " " << waypointsInn[i][2] << "\n" << std::flush;
 	
 	ampl.setOption("solver", "cplex");
+	ampl.setOption("cplex_options", "mipgap=1e-2");
 	//ampl.solve();
+	std::cout << "\nAMPL started solver\n";
 	
 	if (!ampl.isBusy())
 		ampl.solve();
@@ -34,13 +39,14 @@ void UMPathPlanner::run(std::vector<std::vector<double> > waypointsInn)
 void UMPathPlanner::runAsync(std::vector<std::vector<double> > waypointsInn)
 {
 	//std::cout << "\n Number of wps inn is " << waypointsInn.size() << "\n";
+	modifyWp(waypointsInn);
 
 	for(int i = 0; i < waypointsInn.size(); i++)
 		std::cout << waypointsInn[i][0] << " " << waypointsInn[i][1] << " " << waypointsInn[i][2] << "\n" << std::flush;
 	
-	modifyWp(waypointsInn);
 	
 	ampl.setOption("solver", "cplex");
+	ampl.setOption("cplex_options", "mipgap=1e-2");
 	//ampl.solve();
 
 	std::cout << "\nAMPL started solver\n";

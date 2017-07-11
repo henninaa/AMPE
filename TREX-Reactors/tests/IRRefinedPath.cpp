@@ -59,13 +59,20 @@ namespace TREX {
 		provide(UAVTimeline);
 		currentTick = -1;
 		std::cout << "Refined path reactor created for UAV " << TREX::utils::parse_attr<std::string>("1", TeleoReactor::xml_factory::node(arg), "uav_number") << "\n";
-		
 
 		planReady = false;
 		needsWorkThisTick = false;
 		lastTickReceivedPlan = -1;
 		nwpTick = 0;
 		stepLength = 0.25;
+
+
+		initialState = std::vector<double>(18,0);
+
+		initialState[10] = TREX::utils::parse_attr<float>(0.0f, TeleoReactor::xml_factory::node(arg), "init_n");
+		initialState[11] = TREX::utils::parse_attr<float>(0.0f, TeleoReactor::xml_factory::node(arg), "init_e");
+		initialState[12] = TREX::utils::parse_attr<float>(0.0f, TeleoReactor::xml_factory::node(arg), "init_d");
+		std::cout << "With initial position: " << initialState[10]<< " " <<  initialState[11]<< " " << initialState[12]<< "\n";
 
 	}
 
@@ -76,17 +83,20 @@ namespace TREX {
 	void IRRefinedPath::handleInit(){
 		mpc = new LMMPC(linearModel);
 		mpc->setup(10.0, 0.25);
-		mpc->initializeController();
+
+
+		mpc->initializeController(initialState);
 
 		//mpc->addWaypoint(0.0, 0.0, 0.0, 0.0);
 		//mpc->addWaypoint(18.0*15, 0.0, 0.0, 15.0);
 		//mpc->addWaypoint(18.0*15, 15 * 18.0, 0.0, 30.0);
 		//mpc->addWaypoint(18.0*15, 45 * 18.0, 0.0, 60.0);
 		//mpc->addWaypoint(165.0, 30.0, 0.0, 9.0);
-		mpc->addWaypoint(0.0, 0.0, 0.0, 0.0);
-		mpc->addWaypoint(18.0*15, 0.0, 0.0, 15.0);
-		mpc->addWaypoint(18.0*15, 15 * 18.0, 0.0, 30.0);
-		mpc->addWaypoint(18.0*15, 45 * 18.0, 0.0, 60.0);
+		mpc->addWaypoint(initialState[10], initialState[11], initialState[12], 0.0);
+		mpc->addWaypoint(600.0, 500.0, 0.0, 38.221);
+		mpc->addWaypoint(200, 800, 00.0, 65.2480);
+		mpc->addWaypoint(-200.0, 800.0, 00.0, 86.869);
+		mpc->addWaypoint(00.0, 00.0, 00.0, 131.4431);
 		std::cout << "Waypoints inserted\n";
 
 	}
@@ -129,7 +139,7 @@ namespace TREX {
 		mpc->step(stepLength * currentTick);
 		std::cout << "\n step: " << stepLength * currentTick << "\n";
 		//mpc->simulate(30.0);
-		if(currentTick % 50 == 0)
+		if(currentTick % 50 == 0 && currentTick == 200)
 			mpc->plot();
 
 		needsWorkThisTick = false;

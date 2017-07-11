@@ -1,6 +1,6 @@
 #include "CrudePathModule.h"
 
-CrudePathModule::CrudePathModule() : planner(100, 2.0), sampleTime(2)
+CrudePathModule::CrudePathModule() : planner(36, 5.0), sampleTime(5)
 {
 
 	planner.setModelParam("deltat", sampleTime);
@@ -16,9 +16,32 @@ void CrudePathModule::run(){
 	wp[2][0] = 400;	wp[2][1] = 200;	wp[2][2] = 400;
 	wp[3][0] = 300;	wp[3][1] = 200;	wp[3][2] = 100;
 
+	//checkDistances();
+
 	setUAVPositions();
 
 	planner.runAsync(getWaypointsVector());
+
+	//bool fin = false;
+	//std::vector<std::vector<std::vector<double> > >pathWp;
+
+
+}
+
+void CrudePathModule::runSync(){
+
+
+	std::vector<std::vector<double> > wp = std::vector<std::vector<double> >(4, std::vector<double>(3, 100));
+	wp[0][0] = 0;	wp[0][1] = 0;	wp[0][2] = 100;
+	wp[1][0] = 100;	wp[1][1] = 100;	wp[1][2] = 200;
+	wp[2][0] = 400;	wp[2][1] = 200;	wp[2][2] = 400;
+	wp[3][0] = 300;	wp[3][1] = 200;	wp[3][2] = 100;
+
+	//checkDistances();
+
+	setUAVPositions();
+
+	planner.run(getWaypointsVector());
 
 	//bool fin = false;
 	//std::vector<std::vector<std::vector<double> > >pathWp;
@@ -270,7 +293,7 @@ void CrudePathModule::checkDistances(UAV & uav){
 
 	double distance;
 
-	for (auto it = nodes.begin(); it != nodes.end(); it++){
+	for (auto it = nodes.begin(); it != nodes.end()-1; it++){
 
 		distance = std::sqrt( std::pow(uav.n - it->n, 2) + std::pow(uav.e - it->e, 2) + std::pow(uav.d - it->d, 2));
 

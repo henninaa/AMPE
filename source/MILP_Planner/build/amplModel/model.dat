@@ -1,18 +1,18 @@
 param np := 2; 	#total number of vehicles
-param N := 40; 	# optimization horizon
+param N := 36; 	# optimization horizon
 param Dvel := 8;
 param W := 4;
 
-param deltat := 2; 	# Sampletime
+param deltat := 4; 	# Sampletime
 
 param Vmax := 20;
-param Vmin := 15;
+param Vmin := 18;
 
 
-param x_min := -1000;
-param x_max := 1000;
-param y_min := -1000;
-param y_max := 1000;
+param x_min := -1500;
+param x_max := 1500;
+param y_min := -1500;
+param y_max := 1500;
 param h_min := -50;
 param h_max := 100;
 
@@ -40,7 +40,7 @@ param alphavel := 1.01;
 param Mvel := 100;
 
 param dwp := 4;
-param Mwp := 600;
+param Mwp := 6000;
 
 param: rweight :=
 1 0.1
@@ -48,12 +48,12 @@ param: rweight :=
 3 0.1;
 
 param waypoints: 1 2 3:=
-1 100 0 0
-2 500 400 0
-3 400 50 0
-4 100 150 20;
+1 0 600 0
+2 600 0 0
+3 600 600 0
+4 0 0 0;
 
-param M_finnish := 60;
+param M_finnish := 100;
 param gamma_finnish := 10;
 
 
@@ -62,10 +62,10 @@ param dx :=	2;	#
 param dy := 2;	#	-anti-collition safety distance
 param dz := 5;	#
 
-param Rcon := 80;
+param Rcon := 50;
 param epsilon := 0.001;
 
-param MCol := 10000;	#anti-collision big M
+param MCol := 100000;	#anti-collision big M
 
 param cx := 7;	#
 param cy := 7;	#	-anti-collition safety distance
@@ -80,7 +80,7 @@ param: wind :=
 3 0;
 
 param cSensor := 2;
-param hBar := 4;
+param hBar := 3;
 param Cmax := 4;
 param CmaxOut := 4;
 param CmaxIn := 4;

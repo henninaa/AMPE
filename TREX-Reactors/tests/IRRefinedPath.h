@@ -37,6 +37,8 @@ public:
 
 private:
 
+	std::vector<double> initialState;
+
 	void handleRequest(TREX::transaction::goal_id const & goal);
 
 	void dispatchGoals();

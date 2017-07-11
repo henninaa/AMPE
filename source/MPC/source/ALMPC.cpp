@@ -38,16 +38,15 @@ void LMMPC::setup(double horizon, double stepLength, double initialX, double ini
 
 	this->horizon = horizon;
 	this->stepLength = stepLength;
-	std::cout << "\nERROR\n";
 	
 	if (model == nullptr)
 		setupModel();
-	std::cout << "\nERROR3\n";
+
 	setupReferenceFunction();
-	std::cout << "\nERROR2\n";
+
 	
 	setupOCP(horizon, stepLength);
-	std::cout << "\nERROR1\n";
+
 
 	alg = new ACADO::RealTimeAlgorithm(*ocp, stepLength);
 	//alg->set( ACADO::INTEGRATOR_TYPE, ACADO::INT_RK45           );
@@ -56,7 +55,7 @@ void LMMPC::setup(double horizon, double stepLength, double initialX, double ini
     //alg.set( ACADO::MAX_NUM_INTEGRATOR_STEPS, 10000  );
 
 	//referenceTrajectory = new ACADO::StaticReferenceTrajectory(waypoints);
-	std::cout << "\nERROR\n";
+	
 	
 	controller = new ACADO::Controller(*alg);
 }
@@ -260,10 +259,8 @@ void LMMPC::keepOnlyWaypointsFromTo(double from, double to){
 
 void LMMPC::setupReferenceFunction(){
 
-	std::cout << "\nERROR\n" << std::flush;
 
 	referenceFunction = new ACADO::Function();
-	std::cout << "\nERROR\n" << std::flush;
 
 	(*referenceFunction) << model->N;
 	(*referenceFunction) << model->E;
@@ -273,10 +270,11 @@ void LMMPC::setupReferenceFunction(){
 	(*referenceFunction) << model->delta_aDot;
 	(*referenceFunction) << model->delta_eDot;
 	(*referenceFunction) << model->delta_tDot;
-	(*referenceFunction) << model->vHat;
+	(*referenceFunction) << model->wHat;
+	(*referenceFunction) << model->delta_epsilon_u;
 
 
-	referenceFunctionDimention = 8;
+	referenceFunctionDimention = 9;
 
 	coefficientMatrix = new ACADO::DMatrix(referenceFunctionDimention, referenceFunctionDimention);
 	coefficientMatrix->setAll(0);
@@ -284,30 +282,26 @@ void LMMPC::setupReferenceFunction(){
 	for (int i = 0; i < referenceFunctionDimention; i++)
 		(*coefficientMatrix)(i,i) = 1.0f;
 
-	(*coefficientMatrix)(2,2) = 10.0f;
-	(*coefficientMatrix)(3,3) = 1.0f;
-	(*coefficientMatrix)(4,4) = 010.10f;
-	(*coefficientMatrix)(5,5) = 0100.10f;
-	(*coefficientMatrix)(6,6) = 0100.10f;
+	(*coefficientMatrix)(2,2) = 100.0f;
+	(*coefficientMatrix)(3,3) = 10.0f;
+	(*coefficientMatrix)(4,4) = 010000.10f;
+	(*coefficientMatrix)(5,5) = 010000.10f;
+	(*coefficientMatrix)(6,6) = 010000.10f;
+	(*coefficientMatrix)(8,8) = 0100000000.10f;
 
 }
 
 
 void LMMPC::setupOCP(double horizon, double stepLength){
-	std::cout << "\nERRORb\n";
 
 	ocp = new ACADO::OCP(0.0, horizon, horizon / stepLength);
-	std::cout << "\nERRORb\n";
 
 	ACADO::DVector tmpVec(referenceFunctionDimention);
-	std::cout << "\nERRORb\n";
 	tmpVec.setAll(0.0);
-	std::cout << "\nERRORb\n";
 	ocp->minimizeLSQ( *coefficientMatrix, *referenceFunction, tmpVec);
-	std::cout << "\nERRORb\n";
 
 	ocp->subjectTo(*(model->getModel()));
-	std::cout << "\nERRORb\n";
+
 	//ocp->subjectTo(-0.3 <= model->theta <= 0.3);
 	//ocp->subjectTo(-0.3 <= model->phi <= 0.3);
 	//ocp->subjectTo(-0.3 <= model->psi <= 0.3);
@@ -321,6 +315,7 @@ void LMMPC::setupOCP(double horizon, double stepLength){
 	ocp->subjectTo(-0.3 <= model->delta_eDot <= 0.3);
 	ocp->subjectTo(-0.3 <= model->delta_rDot <= 0.3); //r is always 0 due to X8 params
 	ocp->subjectTo(-0.3 <= model->delta_aDot <= 0.3);
+	ocp->subjectTo(15 <= model->epsilon_u <= 24);
 }
 
 void LMMPC::setupModel(){
@@ -422,7 +417,7 @@ void LMMPC::createReferenceTrajectory(double t0){
 			//TODO: fix angle to match revolution (n*2pi) of yaw
 		
 			path.addVector(vector, t + ts);
-			std::cout << (waypoints[i].x * ((td - t) / td) ) + (waypoints[i+1].x * (t / td))<< " " << (waypoints[i].y * ((td - t) / td) ) + (waypoints[i+1].y * (t / td)) << " " << (waypoints[i].z * ((td - t) / td) ) + (waypoints[i+1].z * (t / td))<< " " << t + ts <<"\n";
+			//std::cout << (waypoints[i].x * ((td - t) / td) ) + (waypoints[i+1].x * (t / td))<< " " << (waypoints[i].y * ((td - t) / td) ) + (waypoints[i+1].y * (t / td)) << " " << (waypoints[i].z * ((td - t) / td) ) + (waypoints[i+1].z * (t / td))<< " " << t + ts <<"\n";
 		}
 	}
 	this->referencePath = path;
@@ -435,16 +430,28 @@ void LMMPC::createReferenceTrajectory(double t0){
 
 }
 
+
+void LMMPC::initializeController(std::vector<double> initialState){
+
+ACADO::DVector s0(18);
+	
+	for (int i = 0; i < 18; i++){
+
+		s0(i) = initialState[i];
+
+	}
+
+	initializeController(s0);
+
+
+}
+
 void LMMPC::initializeController(ACADO::DVector initialState){
 
 	simulatorOutput = new ACADO::OutputFcn;
 	//controller->step(currentTime, currentY);
 	//completeStep();	
-	ACADO::DVector s0(17);
-	s0.setAll(0.0);
-	s0(5) = 0.0;
-	s0(9) = 0;
-	s0(12) = 0;
+	
 	dynSys = new ACADO::DynamicSystem(*(model->getModel()), *simulatorOutput);
 	process = new ACADO::Process(*dynSys, ACADO::INT_RK45);
 
@@ -455,11 +462,11 @@ void LMMPC::initializeController(ACADO::DVector initialState){
 	int nSteps = 0;
 
 	
-	if (controller->init( 0,s0 ) != ACADO::SUCCESSFUL_RETURN)
+	if (controller->init( 0,initialState ) != ACADO::SUCCESSFUL_RETURN)
 		exit( EXIT_FAILURE );
 	controller->getU( uCon );
 	
-	if (process->init( startTime,s0,uCon ) != ACADO::SUCCESSFUL_RETURN)
+	if (process->init( startTime,initialState,uCon ) != ACADO::SUCCESSFUL_RETURN)
 		exit( EXIT_FAILURE );
 	process->getY( ySim );
 

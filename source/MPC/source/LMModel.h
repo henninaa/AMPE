@@ -27,8 +27,8 @@ public:
 	//ACADO::Control delta_eDot, delta_aDot, delta_rDot, delta_tDot;
 
 	ACADO::DifferentialState vHat, pHat, rHat, phiHat, psiHat, uHat, wHat, qHat, thetaHat, hHat, N, E, D, delta_aHat, delta_rHat, delta_eHat, delta_tHat;
-	ACADO::IntermediateState u, v, w, theta, phi, psi, p, r, q, h,  delta_e, delta_a, delta_r, delta_t;
-	ACADO::Control delta_aDot, delta_rDot, delta_eDot, delta_tDot;
+	ACADO::IntermediateState u, v, w, theta, phi, psi, p, r, q, h,  delta_e, delta_a, delta_r, delta_t, epsilon_u;
+	ACADO::Control delta_aDot, delta_rDot, delta_eDot, delta_tDot, delta_epsilon_u;
 
 protected:
 

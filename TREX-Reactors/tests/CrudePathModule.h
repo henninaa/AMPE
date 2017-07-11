@@ -15,6 +15,7 @@ public:
 	~CrudePathModule() {}
 
 	virtual void run();
+	virtual void runSync();
 	virtual bool isRunning(){return !planner.isDone();}
 	virtual bool isDone(){return planner.isDone();}
 

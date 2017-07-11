@@ -32,24 +32,24 @@ namespace TREX {
 		int nUAVs = TREX::utils::parse_attr<int>(1, TeleoReactor::xml_factory::node(arg), "numberOfUAVs");
 		
 		use(UAVTimeline_1);
-		addUAVTimelinePair(0.0, 0.0, 0.0, UAVTimeline_1);
+		addUAVTimelinePair(-100.0, 0.0, 0.0, UAVTimeline_1);
 	
 		if(nUAVs >= 2){
 			use(UAVTimeline_2);
-			addUAVTimelinePair(50.0, 0.0, 0.0, UAVTimeline_2);
+			addUAVTimelinePair(100.0, 0.0, 0.0, UAVTimeline_2);
 		}
 
 		if(nUAVs >= 3){
 			use(UAVTimeline_3);
-			addUAVTimelinePair(-50.0, 00.0, 0.0, UAVTimeline_3);
+			addUAVTimelinePair(0.0, 100.0, 0.0, UAVTimeline_3);
 
 		}
 		std::cout << "Crude path reactor created using " << nUAVs << " UAVS\n";
 
 		planReady = false;
 		hasWorkThisTick = false;
-		currentTick = -1;
-		
+		currentTick = -2;
+		/*
 		nodeIdCounter++;
 		module.addNode(100.0, 0.0, 0.0, nodeIdCounter);
 		//module.addUAV(0.0, 0.0, 0.0, nodeIdCounter);
@@ -60,20 +60,50 @@ namespace TREX {
 		module.addNode(400.0, 50.0, 00.0, nodeIdCounter);
 		//module.addUAV(0.0, 10.0, 0.0, nodeIdCounter);
 		nodeIdCounter++;
-		module.addNode(100.0, 150.0, 20.0, nodeIdCounter);
+		module.addNode(100.0, 150.0, 0.0, nodeIdCounter);
 		//nodeIdCounter++;
 		//module.addNode(150.0, 200.0, 100.0, nodeIdCounter);
-
+	*/
+		nodeIdCounter++;
+		module.addNode(600.0, 500.0, 0.0, nodeIdCounter);
+		//module.addUAV(0.0, 0.0, 0.0, nodeIdCounter);
+		nodeIdCounter++;
+		module.addNode(200.0, 800.0, 00.0, nodeIdCounter);
+		//module.addUAV(10.0, 0.0, 0.0, nodeIdCounter);
+		nodeIdCounter++;
+		module.addNode(00.0, 1100.0, 00.0, nodeIdCounter);
+		//module.addUAV(0.0, 10.0, 0.0, nodeIdCounter);
+		nodeIdCounter++;
+		module.addNode(-200.0, 1100.0, 0.0, nodeIdCounter);
+		nodeIdCounter++;
+		module.addNode(-400.0, 500.0, 0.0, nodeIdCounter);
+		//nodeIdCounter++;
+		//module.addNode(150.0, 200.0, 100.0, nodeIdCounter);
 		stepLength = 0.25;
-		sampleTime = 2.0;
+		sampleTime = 5;//2.0;
 		module.setSampleTime(sampleTime);
-		planStartedAt = 0;
+		planStartedAt = -3;
 
 
 	}
 
 	CRCrudePath::~CRCrudePath(){
 		std::cout << "Crude path reactor closed\n";
+
+	}
+
+	void CRCrudePath::handleInit(){
+
+		std::cout << "\nRunning init plan\n";
+		if(moduleSwitch){
+			planStartedAt = 0;
+			module.runSync();
+			module.updatePath();
+			dispatchPlan();
+		}
+
+		std::cout << "\nPlan dispatched\n";
+
 
 	}
 
@@ -106,6 +136,7 @@ namespace TREX {
 		else
 			std::cout << "random notify\n";
 
+		double n,e,d;
 
 		for(auto tl = uavTimelinePairs.begin(); tl != uavTimelinePairs.end(); tl++){
 			
@@ -118,18 +149,18 @@ namespace TREX {
 
 				if (obs.hasAttribute("n")){
 					std::cout << "Observation N received: " << obs.getAttribute("n").domain().getTypedSingleton<float, true>() << "\n";
-					module.moveUAVN(obs.getAttribute("n").domain().getTypedSingleton<float, true>(), tl->id);
+					n = (obs.getAttribute("n").domain().getTypedSingleton<float, true>());
 					nVars++;
 				}
 				if(obs.hasAttribute("e")){
 					std::cout << "Observation E received: " << obs.getAttribute("e").domain().getTypedSingleton<float, true>() << "\n";
-					module.moveUAVE(obs.getAttribute("e").domain().getTypedSingleton<float, true>(), tl->id);
+					e = (obs.getAttribute("e").domain().getTypedSingleton<float, true>());
 
 					nVars++;
 				}
 				if(obs.hasAttribute("d")){
 					std::cout << "Observation D received: " << obs.getAttribute("d").domain().getTypedSingleton<float, true>() << "\n";
-					module.moveUAVN(obs.getAttribute("d").domain().getTypedSingleton<float, true>(), tl->id);
+					d = (obs.getAttribute("d").domain().getTypedSingleton<float, true>() );
 					
 					nVars++;
 				}
@@ -138,6 +169,7 @@ namespace TREX {
 
 				if(nVars == 3){
 				std::cout << "Received observation on timeline " << tl->id << "\n";
+				module.moveUAVTo(n,e,d, tl->id);
 
 				}
 
@@ -201,15 +233,19 @@ namespace TREX {
 		std::cout << "\nDispatched plan\n";
 		TREX::transaction::Goal * goal;
 		int pathSize = module.getPathSize();
+		int timeOffset = 0;
 
 		for(int i = 0; i < uavTimelinePairs.size(); i++){
 			for(int j = 0; j < pathSize; j++){
+
+				timeOffset = ((planStartedAt) * stepLength);// + (j* module.getSampleTime()))));
+				std::cout << "\n----------------------TIME OFFSET:\n" << timeOffset << "\n";
 
 				goal = new TREX::transaction::Goal(uavTimelinePairs[i].timeline, "At");
 				goal->restrictAttribute(TREX::transaction::Variable("n", TREX::transaction::FloatDomain(module.getWaypoint(i, j).n)));
 				goal->restrictAttribute(TREX::transaction::Variable("e", TREX::transaction::FloatDomain(module.getWaypoint(i, j).e)));
 				goal->restrictAttribute(TREX::transaction::Variable("d", TREX::transaction::FloatDomain(module.getWaypoint(i, j).d)));
-				goal->restrictAttribute(TREX::transaction::Variable("t", TREX::transaction::FloatDomain(((planStartedAt) * stepLength) + (j* module.getSampleTime()))));
+				goal->restrictAttribute(TREX::transaction::Variable("t", TREX::transaction::FloatDomain( timeOffset + (j* module.getSampleTime()))));//((planStartedAt) * stepLength) + (j* module.getSampleTime()))));
 
 				postGoal(*goal);
 				delete goal;

@@ -201,6 +201,7 @@ bool LMModelLinear::createModel(){
 	delta_r = delta_rHat + delta_rStar;
 	delta_e = delta_eHat + delta_eStar;
 	delta_t = delta_tHat + delta_tStar;
+	epsilon_u = delta_epsilon_u + u;
 
 
 	//------------------------------Latteral
@@ -244,6 +245,13 @@ bool LMModelLinear::createModel(){
 	model << dot(delta_rHat) == delta_rDot;
 	model << dot(delta_eHat) == delta_eDot;
 	model << dot(delta_tHat) == delta_tDot;
+
+	ACADO::DifferentialState dummy;
+
+	model << dot(dummy) == epsilon_u;
+
+	//obs, untested changes
+
 
 	setConstaintsAsParameters();
 	return true;

@@ -19,6 +19,7 @@ public:
 
 	void setup(double horizon = 20, double stepLength = 0.25, double initialX = 0, double initialY = 0, double initialZ = 50);
 	void initializeController(ACADO::DVector initialState = ACADO::DVector());
+	void initializeController(std::vector<double> initialState);
 	void setModel(LMModel * model);
 	ACADO::DVector step(double currnetTime);//ACADO::DVector currentY, double currentTime);
 	void step(ACADO::DVector currentY, ACADO::VariablesGrid referenceTrajectory, double currentTime);
