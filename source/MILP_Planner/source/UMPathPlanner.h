@@ -68,6 +68,7 @@ public:
 
 	bool isDone() { return !ampl.isBusy(); }
 	void setModelParam(std::string name, double val);
+	void sabotage(double newBattery, int uavn);
 private:
 
 	ampl::AMPL ampl;

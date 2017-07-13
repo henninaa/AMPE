@@ -73,6 +73,8 @@ private:
 	double sampleTime;
 	int planStartedAt;
 
+	bool isFirstTick;
+
 	CrudePathModule module;
 
 	void printPlan();

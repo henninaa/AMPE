@@ -27,12 +27,20 @@ void UMPathPlanner::run(std::vector<std::vector<double> > waypointsInn)
 		std::cout << waypointsInn[i][0] << " " << waypointsInn[i][1] << " " << waypointsInn[i][2] << "\n" << std::flush;
 	
 	ampl.setOption("solver", "cplex");
-	ampl.setOption("cplex_options", "mipgap=1e-2");
+	//ampl.setOption("cplex_options", "mipgap=1e-2");
 	//ampl.solve();
 	std::cout << "\nAMPL started solver\n";
-	
-	if (!ampl.isBusy())
-		ampl.solve();
+	try{
+		if (!ampl.isBusy())
+			ampl.solve();
+	}
+	catch(const std::exception& e){
+		if(!ampl.isBusy())
+			ampl.solve();
+		std::cout << "\n------AMPL crash---------\n";
+	}
+	std::cout << "\nAMPL started solver\n" << std::flush;
+
 
 }
 
@@ -46,14 +54,20 @@ void UMPathPlanner::runAsync(std::vector<std::vector<double> > waypointsInn)
 	
 	
 	ampl.setOption("solver", "cplex");
-	ampl.setOption("cplex_options", "mipgap=1e-2");
+	//ampl.setOption("cplex_options", "mipgap=1e-2");
 	//ampl.solve();
 
 	std::cout << "\nAMPL started solver\n";
-	
-	if (!ampl.isBusy())
-		ampl.solveAsync(&isOverHandler);
-
+	try{
+		if (!ampl.isBusy())
+			ampl.solveAsync(&isOverHandler);
+	}
+	catch(const std::exception& e){
+		if (!ampl.isBusy())
+			ampl.solveAsync(&isOverHandler);
+		std::cout << "\n------AMPL crash---------\n";
+	}
+	std::cout << "\nAMPL started solver\n" << std::flush;
 }
 
 
@@ -90,7 +104,7 @@ std::vector<UMPathPlanner::ObjectPath> UMPathPlanner::getPaths(){
 	ampl::DataFrame datay = amplVary.getValues();
 	ampl::DataFrame dataz = amplVarz.getValues();
 
-	int n = datax.getRowByIndex(datax.getNumRows()-1)[1].dbl(); //get length of path
+	int n = datax.getRowByIndex(datax.getNumRows()-1)[1].dbl()+1; //get length of path
 	int p = datax.getRowByIndex(datax.getNumRows()-1)[0].dbl();	//get number of uavs
 
 	//path = std::vector<std::vector<std::vector<double> > > (p, std::vector<std::vector<double> >(n, std::vector<double>(3, 0)));
@@ -181,8 +195,16 @@ void UMPathPlanner::exportNodePositionsToAMPL(){
 	W.set(wn);
 }
 
-void UMPathPlanner::modifyWp(std::vector<std::vector<double> > waypointsInn)
+void UMPathPlanner::modifyWp(std::vector<std::vector<double> > waypointInput)
 {
+
+	std::vector<std::vector < double > >  waypointsInn = std::vector<std::vector < double > >(10,std::vector < double > (3,0) );
+
+	for( int i = 0; i < waypointInput.size(); i++){
+		waypointsInn[i] = waypointInput[i];
+	}
+
+
 
 	int n = waypointsInn.size();
 	int nc = waypointsInn[0].size();
@@ -207,6 +229,7 @@ void UMPathPlanner::modifyWp(std::vector<std::vector<double> > waypointsInn)
 	ampl::Variant wn(n);
 
 	waypoints.setValues(n, rowIndices, 3, colIndices, waypointData, false);
+	n = waypointInput.size();
 	W.set(wn);
 }
 
@@ -237,8 +260,10 @@ void UMPathPlanner::setUAVPositions(std::vector<std::vector<double> > uavPositio
 	for (int i = 0; i < n; i++) {
 		rowIndices[i] = i + 1;
 
-		for (int j = 0; j < nc; j++)
+		for (int j = 0; j < nc; j++){
 			waypointData[j + i * nc] = uavPositions[i][j];
+			std::cout << uavPositions[i][j] << " \n";
+		}
 	}
 
 	ampl::Variant wn(n);
@@ -256,3 +281,13 @@ void UMPathPlanner::setModelParam(std::string name, double val){
 	W.set(wn);
 
 }
+
+void UMPathPlanner::sabotage(double newBattery, int uavn){
+
+	std::string str = std::to_string(uavn);
+
+	setModelParam("battery" + str, newBattery);
+
+
+}
+

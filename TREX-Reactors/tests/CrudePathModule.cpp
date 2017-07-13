@@ -1,9 +1,10 @@
 #include "CrudePathModule.h"
 
-CrudePathModule::CrudePathModule() : planner(36, 5.0), sampleTime(5)
+CrudePathModule::CrudePathModule() : planner(42, 5.0), sampleTime(5)
 {
 
 	planner.setModelParam("deltat", sampleTime);
+	checkTime = true;
 
 }
 
@@ -20,7 +21,13 @@ void CrudePathModule::run(){
 
 	setUAVPositions();
 
+
 	planner.runAsync(getWaypointsVector());
+
+	checkTime = true;
+
+	clock_gettime(CLOCK_MONOTONIC, &start);
+
 
 	//bool fin = false;
 	//std::vector<std::vector<std::vector<double> > >pathWp;
@@ -38,10 +45,19 @@ void CrudePathModule::runSync(){
 	wp[3][0] = 300;	wp[3][1] = 200;	wp[3][2] = 100;
 
 	//checkDistances();
+	
+
+	clock_gettime(CLOCK_MONOTONIC, &start);
 
 	setUAVPositions();
 
 	planner.run(getWaypointsVector());
+
+	clock_gettime(CLOCK_MONOTONIC, &finish);
+
+		elapsed = (finish.tv_sec - start.tv_sec);
+		elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+	times.push_back(elapsed);
 
 	//bool fin = false;
 	//std::vector<std::vector<std::vector<double> > >pathWp;
@@ -321,6 +337,8 @@ void CrudePathModule::setUAVPositions(){
 		pos[i][1] = it->e;
 		pos[i][2] = it->d;
 
+		std::cout << "UAV " << i << " N: " << pos[i][0] << " Es: " << pos[i][1] << " D: " << pos[i][2] << "\n";
+
 	}
 	
 	planner.setUAVPositions(pos);
@@ -358,5 +376,85 @@ void CrudePathModule::setSampleTime(double st){
 
 	sampleTime = st;
 	planner.setModelParam("deltat", st);
+
+}
+
+void CrudePathModule::save(){
+
+	std::cout << "over" << path.size() <<std::flush;
+	UMPathPlanner::ObjectPath p = path[0];
+	std::cout << "under";
+
+std::string result = "";
+	std::cout << "over" << path.size() <<std::flush;
+
+	for(int i = 0; i < p.path.size(); i++){
+
+
+		result += std::to_string(p.path[i][0]) + " " + std::to_string(p.path[i][1]) + " " + std::to_string(p.path[i][2]) + "\n";
+
+
+	}
+	std::cout << "over" << path.size() <<std::flush;
+
+	std::ofstream f1("/home/henning/Documents/Masters_Thesis/Results/path1.txt");
+	f1 << result;
+	f1.close();
+	std::cout << "over" << path.size() <<std::flush;
+
+	p = path[1];
+
+	result = "";
+
+	for(int i = 0; i < p.path.size(); i++){
+
+
+		result +=  std::to_string(p.path[i][0]) + " " + std::to_string(p.path[i][1]) + " " + std::to_string(p.path[i][2]) + "\n";
+
+
+	}
+	std::cout << "over" << path.size() <<std::flush;
+
+	std::ofstream f2("/home/henning/Documents/Masters_Thesis/Results/path2.txt");
+	f2 << result;
+	f2.close();
+	result = "";
+	std::cout << "over" << path.size() <<std::flush;
+
+	for(int i = 0; i < times.size(); i++)
+		result += std::to_string(times[i]) + "\n";
+
+	std::ofstream f3("/home/henning/Documents/Masters_Thesis/Results/crudeTimes.txt");
+	f3 << result;
+	f3.close();
+	std::cout << "over" << path.size() <<std::flush;
+
+}
+
+bool CrudePathModule::isDone(){
+	
+bool result = planner.isDone();
+
+	if(result && checkTime){
+		checkTime = false;
+
+		clock_gettime(CLOCK_MONOTONIC, &finish);
+
+		elapsed = (finish.tv_sec - start.tv_sec);
+		elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+	times.push_back(elapsed);
+
+	save();
+		
+	}
+
+	return result;
+}
+
+void CrudPathModule::runVessels(int currentTick){
+
+	for(auto it = nodes.begin(); it != noes.end(); it++)
+		it->updatePos(currentTick);
+
 
 }

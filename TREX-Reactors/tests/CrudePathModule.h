@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include <fstream>
+#include <ctime>
 
 #include "shared.h"
 #include "../../source/MILP_Planner/source/UMPathPlanner.h"
@@ -14,10 +16,10 @@ public:
 	CrudePathModule();
 	~CrudePathModule() {}
 
-	virtual void run();
-	virtual void runSync();
+	virtual void run(int currentTick);
+	virtual void runSync(int currentTick);
 	virtual bool isRunning(){return !planner.isDone();}
-	virtual bool isDone(){return planner.isDone();}
+	virtual bool isDone();
 
 	virtual void addUAV(double n0, double e0, double d0, int id);
 	virtual bool removeUAV(int id);
@@ -42,8 +44,12 @@ public:
 	double getSampleTime() { return sampleTime; }
 	void setSampleTime(double st);
 
+	void save();
+	void sabotage() {planner.sabotage(1600, 1);}
+
+
 protected:
-	double const NodeHitDistance = 15;
+	double const NodeHitDistance = 50;
 	double sampleTime;
 	int numberOfNodes();
 	int numberOfUAVs();
@@ -59,5 +65,12 @@ protected:
 	void setUAVPositions();
 
 	UMPathPlanner planner;
+
+	std::vector<double> times;
+	bool checkTime;
+	struct timespec start, finish;
+		double elapsed;
+
+	void runVessels( );
 
 };

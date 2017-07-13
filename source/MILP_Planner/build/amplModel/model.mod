@@ -23,6 +23,7 @@ param y_max;
 param h_min;
 param h_max;
 
+
 #test params:
 param goal{i in Dim};
 param goal2{i in 1..2, j in 1..4};  #row first then collumn
@@ -72,9 +73,15 @@ param Cmax;
 param CmaxOut;
 param CmaxIn;
 
+#Resources constraint
+param battery1;
+param battery2;
+
 
 
 #-------- Vars
+
+var eta_finnish_single;
 
 var v {p in 1..np, i in 0..N, row in Dim};		#velocity in vehicle, time, row
 var V {p in 1..np, i in 0..N};					#absolute velocity in vehicle, time, row
@@ -97,6 +104,7 @@ var lambda_sensor{p in 1..np, i in 0..N, t in 1..W};
 
 var UAV_distances{p in 1..np, q in 1..np, i in 0..N};
 
+var Jv;
 
 #Dataflow
 
@@ -227,13 +235,20 @@ subject to waypointHitN{p in  1..np, i in 1..N, w in 1..W, j in Dim}:
  subject to finnishTime2{p in 1..np, i in 0..N}:
  theta_finnish[p] >= (i + 1) * (1 - bwp[p,i,W]);
  
- subject to timePennalty1{p in 1..np}:
- eta_finnish >= theta_finnish[p];
+ subject to timePennalty1:
+ eta_finnish >= sum{p in 1..np}(theta_finnish[p]);
  
+subject to timePennalty11{p in 1..np}:
+ eta_finnish_single >= (theta_finnish[p]);
+ 
+
  subject to timePennalty2:
- J_finnish = gamma_finnish * eta_finnish;
- 
- 
+ J_finnish = gamma_finnish * eta_finnish + eta_finnish_single * 10;
+
+/*
+subject to separation{p in 1..np-1, q in p+1..np}:
+theta_finnish[p] >= theta_finnish[q] + 1;
+ */
 
  #Set reactor readable vars
 
@@ -360,3 +375,14 @@ subject to collectiveIn{p in 1..np, i in 1..N}:
 sum{ q in 1..np+1, s in 1..np, j in 1..i :p!=q }(c[q,p,i,s,j]) <= CmaxIn;
 
 */
+
+#Resouce constraints
+
+subject to resource1:
+sum{i in 1..N}(V[1, i]) * deltat <= battery1;
+subject to resource2:
+sum{i in 1..N}(V[2, i]) * deltat <= battery1;
+
+
+#subject to jv:
+#sum{i in 1..N, p in 1..np}(V[p, i]) * deltat <= battery1;

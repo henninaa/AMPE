@@ -59,7 +59,7 @@ namespace TREX {
 		provide(UAVTimeline);
 		currentTick = -1;
 		std::cout << "Refined path reactor created for UAV " << TREX::utils::parse_attr<std::string>("1", TeleoReactor::xml_factory::node(arg), "uav_number") << "\n";
-
+		uavnumber = TREX::utils::parse_attr<int>(0, TeleoReactor::xml_factory::node(arg), "uav_number");
 		planReady = false;
 		needsWorkThisTick = false;
 		lastTickReceivedPlan = -1;
@@ -73,6 +73,8 @@ namespace TREX {
 		initialState[11] = TREX::utils::parse_attr<float>(0.0f, TeleoReactor::xml_factory::node(arg), "init_e");
 		initialState[12] = TREX::utils::parse_attr<float>(0.0f, TeleoReactor::xml_factory::node(arg), "init_d");
 		std::cout << "With initial position: " << initialState[10]<< " " <<  initialState[11]<< " " << initialState[12]<< "\n";
+
+		newPlan = false;
 
 	}
 
@@ -93,10 +95,34 @@ namespace TREX {
 		//mpc->addWaypoint(18.0*15, 45 * 18.0, 0.0, 60.0);
 		//mpc->addWaypoint(165.0, 30.0, 0.0, 9.0);
 		mpc->addWaypoint(initialState[10], initialState[11], initialState[12], 0.0);
-		mpc->addWaypoint(600.0, 500.0, 0.0, 38.221);
-		mpc->addWaypoint(200, 800, 00.0, 65.2480);
-		mpc->addWaypoint(-200.0, 800.0, 00.0, 86.869);
-		mpc->addWaypoint(00.0, 00.0, 00.0, 131.4431);
+
+		if(uavnumber == 1){
+
+		mpc->addWaypoint(600.0, 500, 0, 38.429);
+		mpc->addWaypoint(0.0 , 0.0 , 0.0 , 80.87);
+
+			/*
+		mpc->addWaypoint(0.0, 1092, 0, 59.347);
+		mpc->addWaypoint(-187, 1090, 00.0, 69.51);
+		mpc->addWaypoint(-220.0, 921.0, 00.0, 78.868);
+		mpc->addWaypoint(-580.0, 813.0, 00.0, 99.294);
+		mpc->addWaypoint(00.0, 00.0, 00.0, 153.570);
+		*/}
+		else{
+
+/*
+		mpc->addWaypoint(595, 505.0, 0.0, 42.413);
+		mpc->addWaypoint(400, 800, 00.0, 61.631);
+		mpc->addWaypoint(-82.0, 790.0, 00.0, 87.832);
+		mpc->addWaypoint(-0.0, 00.0, 00.0, 130.997);*/
+
+		mpc->addWaypoint(-600, 800.0, 0.0, 51.271);
+		mpc->addWaypoint(-200, 1100, 00.0, 78.444);
+		mpc->addWaypoint(0, 1100, 00.0, 89.313);
+		mpc->addWaypoint(400, 800, 0, 116.486);
+		mpc->addWaypoint(0, 0, 0, 165.096);
+
+		}
 		std::cout << "Waypoints inserted\n";
 
 	}
@@ -134,9 +160,19 @@ namespace TREX {
 
 	void IRRefinedPath::resume(){
 
-		planReady = true;
+
+		if(newPlan){
+			mpc->processPath();
+			newPlan = false;
+		}
 		
 		mpc->step(stepLength * currentTick);
+		mpc->save(uavnumber);
+
+		if(mpc->shouldRun())
+			planReady = true;
+		
+
 		std::cout << "\n step: " << stepLength * currentTick << "\n";
 		//mpc->simulate(30.0);
 		if(currentTick % 50 == 0 && currentTick == 200)
@@ -198,6 +234,7 @@ namespace TREX {
 
 
 					std::cout << "N waypoints received this tick: " << nwpTick;
+					newPlan = true;
 
 
 				}
@@ -229,7 +266,13 @@ namespace TREX {
 	}
 
 
+	bool IRRefinedPath::shouldRun(){
 
+
+
+
+
+	}
 
 
 }

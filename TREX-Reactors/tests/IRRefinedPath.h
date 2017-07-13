@@ -82,6 +82,12 @@ private:
 
 	LMMPC * mpc;
 	double stepLength;
+	bool shouldRun();
+
+	void syncByUDP();
+	int uavnumber;
+
+	bool newPlan;
 
 };
 

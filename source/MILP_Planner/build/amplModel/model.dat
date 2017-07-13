@@ -1,11 +1,11 @@
 param np := 2; 	#total number of vehicles
-param N := 36; 	# optimization horizon
+param N := 46; 	# optimization horizon
 param Dvel := 8;
-param W := 4;
+param W := 10;
 
 param deltat := 4; 	# Sampletime
 
-param Vmax := 20;
+param Vmax := 19;
 param Vmin := 18;
 
 
@@ -22,8 +22,8 @@ param: initPos1 initPos2 :=
 3 50 50;
 
 param initPos: 1 2 3:=
-1 0 0 0
-2 30 30 0;
+1 -100 0 0
+2 100 0 0;
 
 param: goal :=
 1 100
@@ -39,7 +39,7 @@ param goal2: 1 2 3 4 :=
 param alphavel := 1.01;
 param Mvel := 100;
 
-param dwp := 4;
+param dwp := 10;
 param Mwp := 6000;
 
 param: rweight :=
@@ -48,13 +48,19 @@ param: rweight :=
 3 0.1;
 
 param waypoints: 1 2 3:=
-1 0 600 0
-2 600 0 0
+1 600 500 0
+2 400 800 0
 3 600 600 0
-4 0 0 0;
+4 0 0 0
+5 0 0 0
+6 0 0 0
+7 0 0 0
+8 0 0 0
+9 0 0 0
+10 0 0 0;
 
 param M_finnish := 100;
-param gamma_finnish := 10;
+param gamma_finnish := 0.10;
 
 
 
@@ -62,7 +68,7 @@ param dx :=	2;	#
 param dy := 2;	#	-anti-collition safety distance
 param dz := 5;	#
 
-param Rcon := 50;
+param Rcon := 200;
 param epsilon := 0.001;
 
 param MCol := 100000;	#anti-collision big M
@@ -84,3 +90,6 @@ param hBar := 3;
 param Cmax := 4;
 param CmaxOut := 4;
 param CmaxIn := 4;
+
+param battery1 :=100000;
+param battery2 :=100000;

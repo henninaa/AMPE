@@ -2,12 +2,15 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <cmath>
 
 #include "LMModelLinear.h"
 #include <acado_toolkit.hpp>
 #include <acado_optimal_control.hpp>
 #include <acado_gnuplot.hpp>
-
+#include <ctime>
+#include <fstream>
+//#include <variables_grid.hpp>
 
 class LMMPC
 {
@@ -43,6 +46,10 @@ public:
 	double getCurrentD() { return ySim.getLastVector()(12); }
 
 	void plot();
+	bool shouldRun();
+	void save(int uav);
+
+	void processPath();
 
 protected:
 
@@ -97,12 +104,15 @@ protected:
 	void createPlot();
 	void updatePlot();
 
+	std::vector<double> times;
+
 };
 
 class LMMPC::Waypoint
 {
 public:
 	Waypoint(double x, double y, double z, double time = -1) : x(x), y(y), z(z), time(time) {}
+	Waypoint() : x(0), y(0), z(0), time(0) {}
 	~Waypoint(){};
 	
 
@@ -116,3 +126,5 @@ ostream & operator <<(std::vector<Waypoints> &rhs){
 	return result;
 }
 */
+
+double distanceMPC1(double x1, double y1, double x2, double y2);

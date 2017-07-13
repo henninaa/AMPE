@@ -48,7 +48,8 @@ namespace TREX {
 
 		planReady = false;
 		hasWorkThisTick = false;
-		currentTick = -2;
+		isFirstTick = true;
+		currentTick = 2;
 		/*
 		nodeIdCounter++;
 		module.addNode(100.0, 0.0, 0.0, nodeIdCounter);
@@ -68,7 +69,7 @@ namespace TREX {
 		module.addNode(600.0, 500.0, 0.0, nodeIdCounter);
 		//module.addUAV(0.0, 0.0, 0.0, nodeIdCounter);
 		nodeIdCounter++;
-		module.addNode(200.0, 800.0, 00.0, nodeIdCounter);
+		module.addNode(400.0, 800.0, 00.0, nodeIdCounter);
 		//module.addUAV(10.0, 0.0, 0.0, nodeIdCounter);
 		nodeIdCounter++;
 		module.addNode(00.0, 1100.0, 00.0, nodeIdCounter);
@@ -76,7 +77,9 @@ namespace TREX {
 		nodeIdCounter++;
 		module.addNode(-200.0, 1100.0, 0.0, nodeIdCounter);
 		nodeIdCounter++;
-		module.addNode(-400.0, 500.0, 0.0, nodeIdCounter);
+		module.addNode(-600.0, 500.0, 0.0, nodeIdCounter);
+		nodeIdCounter++;
+		module.addNode(-0.0, 00.0, 0.0, nodeIdCounter);
 		//nodeIdCounter++;
 		//module.addNode(150.0, 200.0, 100.0, nodeIdCounter);
 		stepLength = 0.25;
@@ -100,6 +103,7 @@ namespace TREX {
 			module.runSync();
 			module.updatePath();
 			dispatchPlan();
+			module.save();
 		}
 
 		std::cout << "\nPlan dispatched\n";
@@ -110,6 +114,7 @@ namespace TREX {
 	bool CRCrudePath::synchronize(){
 
 		currentTick++;
+		module.save();
 
 		if(!hasWorkThisTick){
 			deliberationNeedsStart = true;
@@ -121,6 +126,9 @@ namespace TREX {
 			//printPlan();
 			dispatchPlan();
 		}
+
+		//if (currentTick == 100)
+		//		module.sabotage();
 
 		return true;
 	}
@@ -191,7 +199,8 @@ namespace TREX {
 	void CRCrudePath::resume(){
 		bool resetPt = false;
 
-		if(deliberationNeedsStart){
+		if(deliberationNeedsStart && (currentTick < 50 || currentTick > 150)){
+			
 
 			module.run();
 			deliberationNeedsStart = false;
@@ -238,7 +247,11 @@ namespace TREX {
 		for(int i = 0; i < uavTimelinePairs.size(); i++){
 			for(int j = 0; j < pathSize; j++){
 
-				timeOffset = ((planStartedAt) * stepLength);// + (j* module.getSampleTime()))));
+				if (isFirstTick){
+					timeOffset = 0;
+				}
+				else
+					timeOffset = ((planStartedAt) * stepLength);// + (j* module.getSampleTime()))));
 				std::cout << "\n----------------------TIME OFFSET:\n" << timeOffset << "\n";
 
 				goal = new TREX::transaction::Goal(uavTimelinePairs[i].timeline, "At");
@@ -254,6 +267,7 @@ namespace TREX {
 					break;
 			}
 		}
+		isFirstTick = false;
 
 	}
 

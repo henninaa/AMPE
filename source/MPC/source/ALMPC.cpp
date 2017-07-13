@@ -25,6 +25,7 @@ LMMPC::~LMMPC(){
 	delete coefficientMatrix;
 	delete referenceFunction;
 
+
 }
 
 void LMMPC::setModel(LMModel * model){
@@ -81,13 +82,21 @@ ACADO::DVector LMMPC::step(double currentTime){//ACADO::DVector currentY, double
 	int nSteps = 0;
 
 	createReferenceTrajectory(currentTime);
+
+	if(!shouldRun())
+		return ySim.getLastVector();
+
 	//controller->setReferenceTrajectory(*referenceTrajectory);
 	
 	//while ( currentTime <= endTime )
 	//{
 		printf( "\n*** WOHO Simulation Loop No. %d (starting at time %.3f) ***\n",nSteps,currentTime );
 
-		
+		struct timespec start, finish;
+		double elapsed;
+
+		clock_gettime(CLOCK_MONOTONIC, &start);
+
 		if (controller->step( currentTime,ySim.getLastVector(), referencePath ) != ACADO::SUCCESSFUL_RETURN)
 			exit( EXIT_FAILURE );
 		
@@ -101,11 +110,20 @@ ACADO::DVector LMMPC::step(double currentTime){//ACADO::DVector currentY, double
 		
 		this->currentTime += stepLength;
 		++nSteps;
+
+		clock_gettime(CLOCK_MONOTONIC, &finish);
+
+		elapsed = (finish.tv_sec - start.tv_sec);
+		elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+		
+		times.push_back(elapsed);
+		std::cout << "\n----------TimeIs: " << elapsed  << "\n";
 	//}
 		pureSim.addVector(ySim.getLastVector(), currentTime);
 		allUs.addVector(uCon, currentTime);
 
 		updatePlot();
+		//save();
 
 	return uCon;
 
@@ -282,11 +300,11 @@ void LMMPC::setupReferenceFunction(){
 	for (int i = 0; i < referenceFunctionDimention; i++)
 		(*coefficientMatrix)(i,i) = 1.0f;
 
-	(*coefficientMatrix)(2,2) = 100.0f;
-	(*coefficientMatrix)(3,3) = 10.0f;
+	(*coefficientMatrix)(2,2) = 1000.0f;
+	(*coefficientMatrix)(3,3) = 10000.0f;
 	(*coefficientMatrix)(4,4) = 010000.10f;
-	(*coefficientMatrix)(5,5) = 010000.10f;
-	(*coefficientMatrix)(6,6) = 010000.10f;
+	(*coefficientMatrix)(5,5) = 01000.10f;
+	(*coefficientMatrix)(6,6) = 0100.10f;
 	(*coefficientMatrix)(8,8) = 0100000000.10f;
 
 }
@@ -306,12 +324,13 @@ void LMMPC::setupOCP(double horizon, double stepLength){
 	//ocp->subjectTo(-0.3 <= model->phi <= 0.3);
 	//ocp->subjectTo(-0.3 <= model->psi <= 0.3);
 	ocp->subjectTo(-1 <= model->phiHat <= 1);
+	//ocp->subjectTo(-15 <= model->d <= 100);
 	ocp->subjectTo(-1 <= model->thetaHat <= 1);
 	ocp->subjectTo(-0.1240 <= model->delta_tHat <= 1);// -trim delta t <= delta t <= 1
 	ocp->subjectTo(-0.3 <= model->delta_eHat <= 0.3);
 	ocp->subjectTo(-0.3 <= model->delta_rHat <= 0.3); //r is always 0 due to X8 params
 	ocp->subjectTo(-0.3 <= model->delta_aHat <= 0.3);
-	ocp->subjectTo(-10 <= model->delta_tDot <= 10);
+	ocp->subjectTo(-4 <= model->delta_tDot <= 4);
 	ocp->subjectTo(-0.3 <= model->delta_eDot <= 0.3);
 	ocp->subjectTo(-0.3 <= model->delta_rDot <= 0.3); //r is always 0 due to X8 params
 	ocp->subjectTo(-0.3 <= model->delta_aDot <= 0.3);
@@ -541,4 +560,148 @@ void LMMPC::updatePlot(){
 	windowControls(3).addData( ySim[ySim.getLastIndex()](16));
 */
 
+}
+
+bool LMMPC::shouldRun(){
+
+	int n = 0;
+
+	if(referencePath.getLastIndex() < horizon/stepLength +1)
+		return false;
+
+	for(int i = referencePath.getLastIndex()-1; i >= 0; i--){
+
+		if(n >= 4)
+			return false;
+		if(referencePath[i+1](0) == referencePath[i](0) && referencePath[i+1](1) == referencePath[i](1) && referencePath[i+1](2) == referencePath[i](2))
+			n++;
+		else
+			return true;
+		
+
+	}
+
+	return true;
+
+
+}
+
+void LMMPC::save(int uav){
+
+
+	if(uav == 1){
+	std::ofstream tFile("/home/henning/Documents/Masters_Thesis/Results/mpc_times1.txt");
+
+	std::string timesString;
+
+	for(int i = 0; i < times.size(); i++)
+		timesString += std::to_string(times[i]) + "\n";
+
+	tFile << timesString;
+	tFile.close();
+
+	//std::ofstream sFile("/home/henning/Documents/Masters_Thesis/Results/states.txt");
+		const char* sf = "/home/henning/Documents/Masters_Thesis/Results/states1.txt";
+		pureSim.print(sf, "", "", "", 10, 5, " ", "\n" );//ToFile('/home/henning/Documents/Masters_Thesis/Results/states.txt', 'states',ACADO::PS_PLAIN);
+		sf = "/home/henning/Documents/Masters_Thesis/Results/controls1.txt";
+		allUs.print(sf, "", "", "", 10, 5, " ", "\n" );
+	}
+	else{
+
+std::ofstream tFile("/home/henning/Documents/Masters_Thesis/Results/mpc_times2.txt");
+
+	std::string timesString;
+
+	for(int i = 0; i < times.size(); i++)
+		timesString += std::to_string(times[i]) + "\n";
+
+	tFile << timesString;
+	tFile.close();
+
+	//std::ofstream sFile("/home/henning/Documents/Masters_Thesis/Results/states.txt");
+		const char* sf = "/home/henning/Documents/Masters_Thesis/Results/states2.txt";
+		pureSim.print(sf, "", "", "", 10, 5, " ", "\n" );//ToFile('/home/henning/Documents/Masters_Thesis/Results/states.txt', 'states',ACADO::PS_PLAIN);
+		sf = "/home/henning/Documents/Masters_Thesis/Results/controls2.txt";
+		allUs.print(sf, "", "", "", 10, 5, " ", "\n" );
+	}
+
+
+
+
+}
+
+void LMMPC::processPath(){
+
+
+	double dst = 0.0;
+	double timeBias = 0.0;
+	double ts,te, td, zd, speed, x,y,z, angle;
+	int interval;
+
+	std::vector<Waypoint> nw;
+
+	Waypoint wp;
+
+	for (int i = 0; i < waypoints.size()-1; i++){
+
+		dst = distanceMPC1(waypoints[i].x, waypoints[i].y,waypoints[i+1].x, waypoints[i+1].y);
+		ts = waypoints[i].time + timeBias;
+		te = waypoints[i+1].time + timeBias;
+		td = te-ts;
+
+
+		if(dst/td > 19 ){
+
+			interval = dst / (18.4 * stepLength);
+			angle = atan2(waypoints[i+1].y - waypoints[i].y, waypoints[i+1].x - waypoints[i].x);
+
+			zd = waypoints[i+1].z - waypoints[i].z;
+
+			x =  waypoints[i].x;
+			y =  waypoints[i].y;
+			z =  waypoints[i].z;
+
+			for(int j = 0; j < interval; j++){
+
+				wp.x = x;
+				wp.y = y;
+				wp.z = z;
+				wp.time = ts;
+
+				nw.push_back(wp);
+
+				x += (18.4 * stepLength) * cos(angle);
+				y += (18.4 * stepLength) * sin(angle);
+				z += zd/interval;
+				ts += stepLength;
+
+				timeBias += stepLength;
+			}
+
+		}	
+		else{
+			wp = waypoints[i];
+			wp.time = ts;
+			nw.push_back(wp);
+
+		}
+
+	}
+
+
+	for(int i = 0; i< waypoints.size(); i ++)
+		std::cout << "old: " << waypoints[i].x << " " << waypoints[i].y << " " << waypoints[i].z << "\n";
+
+	for(int i = 0; i< waypoints.size(); i ++)
+		std::cout << "old: " << nw[i].x << " " << nw[i].y << " " << nw[i].z << "\n";
+
+	waypoints = nw;
+
+
+
+}
+
+double distanceMPC1(double x1, double y1, double x2, double y2){
+
+	return std::sqrt( std::pow(x1 - x2,2) + std::pow(y1 - y2,2) );
 }
