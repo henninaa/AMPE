@@ -49,7 +49,7 @@ namespace TREX {
 		planReady = false;
 		hasWorkThisTick = false;
 		isFirstTick = true;
-		currentTick = 2;
+		currentTick = 3;
 		/*
 		nodeIdCounter++;
 		module.addNode(100.0, 0.0, 0.0, nodeIdCounter);
@@ -100,10 +100,10 @@ namespace TREX {
 		std::cout << "\nRunning init plan\n";
 		if(moduleSwitch){
 			planStartedAt = 0;
-			module.runSync();
+			module.runSync(0);
 			module.updatePath();
 			dispatchPlan();
-			module.save();
+			module.save(currentTick, planStartedAt, true);
 		}
 
 		std::cout << "\nPlan dispatched\n";
@@ -114,7 +114,7 @@ namespace TREX {
 	bool CRCrudePath::synchronize(){
 
 		currentTick++;
-		module.save();
+		module.save(currentTick, planStartedAt);
 
 		if(!hasWorkThisTick){
 			deliberationNeedsStart = true;
@@ -127,8 +127,8 @@ namespace TREX {
 			dispatchPlan();
 		}
 
-		//if (currentTick == 100)
-		//		module.sabotage();
+		if (currentTick == 155)
+				module.sabotage();
 
 		return true;
 	}
@@ -202,7 +202,7 @@ namespace TREX {
 		if(deliberationNeedsStart && (currentTick < 50 || currentTick > 150)){
 			
 
-			module.run();
+			module.run(currentTick);
 			deliberationNeedsStart = false;
 			resetPt = true;
 		}
@@ -212,6 +212,7 @@ namespace TREX {
 			planReady = true;
 			module.updatePath();
 			std::cout << "\nAMPL complete\n";
+			module.save(currentTick, planStartedAt, true);
 		}
 
 		if(resetPt){		
@@ -287,6 +288,7 @@ namespace TREX {
 
 
 		}
+
 
 	}
 

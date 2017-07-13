@@ -5,10 +5,11 @@ CrudePathModule::CrudePathModule() : planner(42, 5.0), sampleTime(5)
 
 	planner.setModelParam("deltat", sampleTime);
 	checkTime = true;
+	nSaves = 0;
 
 }
 
-void CrudePathModule::run(){
+void CrudePathModule::run(int currentTick){
 
 
 	std::vector<std::vector<double> > wp = std::vector<std::vector<double> >(4, std::vector<double>(3, 100));
@@ -20,6 +21,7 @@ void CrudePathModule::run(){
 	//checkDistances();
 
 	setUAVPositions();
+	runVessels(currentTick);
 
 
 	planner.runAsync(getWaypointsVector());
@@ -35,7 +37,7 @@ void CrudePathModule::run(){
 
 }
 
-void CrudePathModule::runSync(){
+void CrudePathModule::runSync(int currentTick){
 
 
 	std::vector<std::vector<double> > wp = std::vector<std::vector<double> >(4, std::vector<double>(3, 100));
@@ -313,8 +315,15 @@ void CrudePathModule::checkDistances(UAV & uav){
 
 		distance = std::sqrt( std::pow(uav.n - it->n, 2) + std::pow(uav.e - it->e, 2) + std::pow(uav.d - it->d, 2));
 
-		if (distance < NodeHitDistance)
+		if (distance < NodeHitDistance){
+			if (it->isActive){
+				it->hitWP = it->lastPos;
+				std::cout << "\n Reached waypoint! Type anything to continue...\n";
+				std::string hold;
+				//std::cin >>hold;
+			}
 			it->isActive = false;
+		}
 
 
 	}
@@ -379,14 +388,16 @@ void CrudePathModule::setSampleTime(double st){
 
 }
 
-void CrudePathModule::save(){
+void CrudePathModule::save(int tick, int planStartedAt, bool newPlan){
 
-	std::cout << "over" << path.size() <<std::flush;
+	
+	if(newPlan)
+		nSaves++;
+
 	UMPathPlanner::ObjectPath p = path[0];
-	std::cout << "under";
 
 std::string result = "";
-	std::cout << "over" << path.size() <<std::flush;
+	
 
 	for(int i = 0; i < p.path.size(); i++){
 
@@ -395,9 +406,14 @@ std::string result = "";
 
 
 	}
-	std::cout << "over" << path.size() <<std::flush;
+	std::string planName;
 
-	std::ofstream f1("/home/henning/Documents/Masters_Thesis/Results/path1.txt");
+	if(newPlan)
+		planName = "/home/henning/Documents/Masters_Thesis/Results/path1" + std::to_string(nSaves) + ".txt";
+	else
+		planName = "/home/henning/Documents/Masters_Thesis/Results/path1.txt";
+
+	std::ofstream f1(planName);
 	f1 << result;
 	f1.close();
 	std::cout << "over" << path.size() <<std::flush;
@@ -413,13 +429,17 @@ std::string result = "";
 
 
 	}
-	std::cout << "over" << path.size() <<std::flush;
+	
+	if(newPlan)
+		planName = "/home/henning/Documents/Masters_Thesis/Results/path2" + std::to_string(nSaves) + ".txt";
+	else
+		planName = "/home/henning/Documents/Masters_Thesis/Results/path2.txt";
 
-	std::ofstream f2("/home/henning/Documents/Masters_Thesis/Results/path2.txt");
+	std::ofstream f2(planName);
 	f2 << result;
 	f2.close();
 	result = "";
-	std::cout << "over" << path.size() <<std::flush;
+
 
 	for(int i = 0; i < times.size(); i++)
 		result += std::to_string(times[i]) + "\n";
@@ -427,7 +447,53 @@ std::string result = "";
 	std::ofstream f3("/home/henning/Documents/Masters_Thesis/Results/crudeTimes.txt");
 	f3 << result;
 	f3.close();
-	std::cout << "over" << path.size() <<std::flush;
+
+	if(newPlan)
+		planName = "/home/henning/Documents/Masters_Thesis/Results/crudeTicks" + std::to_string(nSaves) + ".txt";
+	else
+		planName = "/home/henning/Documents/Masters_Thesis/Results/crudeTicks.txt";
+
+	result = std::to_string(planStartedAt * sampleTime) + " " + std::to_string(tick * 0.25); 
+	std::ofstream f4(planName);
+	f4 << result;
+	f4.close();
+
+
+	result = "";
+	for(int i = 0; i < nodes.size(); i++)
+		result += std::to_string(nodes[i].lastPos.t) + " " + std::to_string(nodes[i].lastPos.n) + " " +  std::to_string(nodes[i].lastPos.e) + " " +  std::to_string(nodes[i].lastPos.d) + "\n";
+
+	std::ofstream f5("/home/henning/Documents/Masters_Thesis/Results/nodeLastPos.txt");
+	f5<< result;
+	f5.close();
+
+
+	result = "";
+	for(int i = 0; i < nodes[0].posLog.size(); i++){
+		for(int j = 0; j < nodes.size(); j++){
+			result += std::to_string(nodes[j].posLog[i].t) + " " +  std::to_string(nodes[j].posLog[i].n) + " " +  std::to_string(nodes[j].posLog[i].e) + " " +  std::to_string(nodes[j].posLog[i].d) + " ";
+		}
+		result += "\n";
+	}
+
+	std::ofstream f6("/home/henning/Documents/Masters_Thesis/Results/nodesLog.txt");
+	f6 << result;
+	f6.close();
+
+result = "";
+	for(int i = 0; i < nodes.size(); i++)
+		result += std::to_string(nodes[i].hitWP.n) + " " +  std::to_string(nodes[i].hitWP.e) + " " +  std::to_string(nodes[i].hitWP.d) + "\n";
+
+	std::ofstream f7("/home/henning/Documents/Masters_Thesis/Results/nodeHipPos.txt");
+	f7<< result;
+	f7.close();
+
+
+	std::cout << "\nLogged crude path" << path.size() <<std::flush;
+
+
+
+
 
 }
 
@@ -444,16 +510,20 @@ bool result = planner.isDone();
 		elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
 	times.push_back(elapsed);
 
-	save();
+	std::cout << "\nPlan is done! Type anything...\n" << std::flush;
+	std::string hold;
+	//std::cin >> hold;
+
+
 		
 	}
 
 	return result;
 }
 
-void CrudPathModule::runVessels(int currentTick){
+void CrudePathModule::runVessels(int currentTick){
 
-	for(auto it = nodes.begin(); it != noes.end(); it++)
+	for(auto it = nodes.begin(); it != nodes.end(); it++)
 		it->updatePos(currentTick);
 
 

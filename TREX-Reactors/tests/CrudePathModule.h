@@ -44,8 +44,8 @@ public:
 	double getSampleTime() { return sampleTime; }
 	void setSampleTime(double st);
 
-	void save();
-	void sabotage() {planner.sabotage(1600, 1);}
+	void save(int tick, int planStartedAt, bool newPlan = false);
+	void sabotage() {planner.sabotage(870, 1);}
 
 
 protected:
@@ -71,6 +71,7 @@ protected:
 	struct timespec start, finish;
 		double elapsed;
 
-	void runVessels( );
+	void runVessels( int currentTick );
+	int nSaves;
 
 };
